@@ -1,0 +1,13 @@
+connection:
+  mysql:
+    hostname: "localhost:3306"
+    database: aluriadev
+    user: root
+    password:
+
+message_provider:
+  command:
+    common:
+      only_players_can_execute: "Only players can perform this command."
+    region:
+      created: "&aRegion &7'%s' &ahas been created."

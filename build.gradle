@@ -1,0 +1,22 @@
+plugins {
+    id 'java-library'
+    id 'maven'
+}
+
+group 'io.github.aluria.region'
+version '1.0.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    //maven { url = "https://jitpack.io" }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    //implementation 'com.github.zkingboos.universalwrapper:mysql-wrapper:4.0.0-SNAPSHOT'
+    implementation 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+}
