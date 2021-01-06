@@ -45,6 +45,14 @@ public final class SelectorContainerWorld {
         return sections.get(player, index);
     }
 
+    public Location getSecondLocation(@NonNull Player player) {
+        return getLocation(player, 1);
+    }
+
+    public Location getFirstLocation(@NonNull Player player) {
+        return getLocation(player, 0);
+    }
+
     public boolean hasEntry(@NonNull Player player) {
         return sections.containsRow(player);
     }

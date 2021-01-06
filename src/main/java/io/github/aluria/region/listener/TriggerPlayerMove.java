@@ -7,14 +7,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 
 public final class TriggerPlayerMove implements Listener {
 
-    @EventHandler(ignoreCancelled = true)
-    private void onPlayerMove(PlayerMoveEvent event) {
-
-    }
+//    @EventHandler(ignoreCancelled = true)
+//    private void onPlayerMove(PlayerMoveEvent event) {
+//
+//    }
 
     @EventHandler(ignoreCancelled = true)
     private void onPlayerInteract(PlayerInteractEvent event) {

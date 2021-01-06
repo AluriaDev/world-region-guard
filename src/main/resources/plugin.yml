@@ -2,6 +2,8 @@ main: io.github.aluria.region.RegionGuardPlugin
 author: zkingboos_
 version: 1.0.0-SNAPSHOT
 name: AluriaRegionGuard
-commands:
-  region:
-    description: "Command to create defined regions"
+softdepend:
+  - Common-Bukkit
+#commands:
+#  region:
+#    description: "Command to create defined regions"
