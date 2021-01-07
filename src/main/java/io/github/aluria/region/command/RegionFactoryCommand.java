@@ -28,6 +28,7 @@ public final class RegionFactoryCommand extends BaseCommand {
 
     @Dependency
     private SelectorContainerWorld containerWorld;
+
     @Dependency
     private RegionRegistry regionRegistry;
 

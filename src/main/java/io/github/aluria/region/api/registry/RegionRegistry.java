@@ -30,7 +30,7 @@ public interface RegionRegistry {
     RegionObject getRegion(@NonNull World world, @NonNull String name);
 
     /**
-     * Removes a region from the records, using its name
+     * Removes a region from the registries, using its name
      *
      * @param world instance of a valid world, obtained through {@link org.bukkit.Bukkit#getWorld(String)}
      * @param name  name of the region you want to delete
@@ -38,7 +38,7 @@ public interface RegionRegistry {
     void removeRegion(@NonNull World world, @NonNull String name);
 
     /**
-     * Check if a region already exists in the records
+     * Check if a region already exists in the registries
      *
      * @param world instance of a valid world, obtained through {@link org.bukkit.Bukkit#getWorld(String)}
      * @param name  name of the region you want to check whether or not it exists
