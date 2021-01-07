@@ -63,16 +63,16 @@ public final class RegionFactoryCommand extends BaseCommand {
 
     @Subcommand("teste")
     public void onTeste(Player player) {
-        final RegionObject playerRegion = regionRegistry.getPlayerRegion(player);
+        final RegionObject playerRegion = regionRegistry.getOneRegionOnLocation(player);
         final String regionName = playerRegion != null
           ? playerRegion.getName() : null;
         player.sendMessage("Is inside of any region? " + regionName);
 
-        for (RegionObject region : regionRegistry.getPlayerRegions(player)) {
+        for (RegionObject region : regionRegistry.getAllRegionsOnLocation(player)) {
             player.sendMessage(String.format("%s with priority %s", region.getName(), region.getPriority()));
         }
 
-        for (RegionObject region : regionRegistry.getRegions(player.getWorld())) {
+        for (RegionObject region : regionRegistry.getAllRegionsContainer(player.getWorld())) {
             player.sendMessage(region.getName());
         }
     }

@@ -1,6 +1,7 @@
 package io.github.aluria.region.registry;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import io.github.aluria.region.api.registry.RegionRegistry;
@@ -11,10 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 public final class RegionRegistryImpl implements RegionRegistry {
@@ -33,11 +31,13 @@ public final class RegionRegistryImpl implements RegionRegistry {
         this.registry = HashMultimap.create();
     }
 
+    @Override
     public void registerRegion(@NonNull World world, @NonNull RegionObject regionObject) {
         registry.put(world, regionObject);
     }
 
-    public RegionObject getRegion(@NonNull World world, @NonNull String name) {
+    @Override
+    public RegionObject getRegionByName(@NonNull World world, @NonNull String name) {
         for (RegionObject regionObject : registry.get(world)) {
             if (regionObject.equals(name)) {
                 return regionObject;
@@ -46,19 +46,8 @@ public final class RegionRegistryImpl implements RegionRegistry {
         return null;
     }
 
-    public void removeRegion(@NonNull World world, @NonNull String name) {
-        final RegionObject region = getRegion(world, name);
-        if (region != null) {
-            registry.remove(world, region);
-        }
-    }
-
-    public boolean hasRegion(@NonNull World world, @NonNull String name) {
-        return getRegion(world, name) != null;
-    }
-
-    public RegionObject getPlayerRegion(@NonNull Player player) {
-        final Location location = player.getLocation();
+    @Override
+    public RegionObject getOneRegionOnLocation(@NonNull Location location) {
         for (RegionObject regionObject : registry.get(location.getWorld())) {
             if (regionObject.isLocationInside(location)) {
                 return regionObject;
@@ -67,16 +56,7 @@ public final class RegionRegistryImpl implements RegionRegistry {
         return null;
     }
 
-    public List<RegionObject> getPlayerRegionsNatural(@NonNull Player player) {
-        return commonPlayerRegions(player, NATURAL_ORDERING);
-    }
-
-    public List<RegionObject> getPlayerRegions(@NonNull Player player) {
-        return commonPlayerRegions(player, REVERSE_ORDERING);
-    }
-
-    private List<RegionObject> commonPlayerRegions(@NonNull Player player, @NonNull Ordering ordering) {
-        final Location location = player.getLocation();
+    private List<RegionObject> _allRegionsOnLocation(@NonNull Location location, Ordering ordering) {
         final Set<RegionObject> regionObjects = new HashSet<>();
         for (RegionObject regionObject : registry.get(location.getWorld())) {
             if (regionObject.isLocationInside(location)) {
@@ -84,14 +64,72 @@ public final class RegionRegistryImpl implements RegionRegistry {
             }
         }
 
+        if (ordering == null) return new ArrayList<>(regionObjects);
         return ordering.sortedCopy(regionObjects);
     }
 
-    public RegionObject getPlayerRegionHigh(@NonNull Player player) {
-        return getPlayerRegions(player).get(0);
+    @Override
+    public void removeRegion(@NonNull World world, @NonNull String name) {
+        final RegionObject region = getRegionByName(world, name);
+        if (region != null) {
+            registry.remove(world, region);
+        }
     }
 
-    public Set<RegionObject> getRegions(@NonNull World world) {
+    @Override
+    public boolean hasRegion(@NonNull World world, @NonNull String name) {
+        return getRegionByName(world, name) != null;
+    }
+
+    @Override
+    public RegionObject getOneRegionOnLocation(@NonNull Player player) {
+        return getOneRegionOnLocation(player.getLocation());
+    }
+
+    @Override
+    public List<RegionObject> getAllRegionsOnLocationNonOrdering(@NonNull Player player) {
+        return getAllRegionsOnLocationNonOrdering(player.getLocation());
+    }
+
+    @Override
+    public List<RegionObject> getAllRegionsOnLocationNonOrdering(@NonNull Location location) {
+        return _allRegionsOnLocation(location, null);
+    }
+
+    @Override
+    public List<RegionObject> getAllRegionsOnLocationNaturally(@NonNull Player player) {
+        return getAllRegionsOnLocationNaturally(player.getLocation());
+    }
+
+    @Override
+    public List<RegionObject> getAllRegionsOnLocationNaturally(@NonNull Location location) {
+        return _allRegionsOnLocation(location, NATURAL_ORDERING);
+    }
+
+    @Override
+    public List<RegionObject> getAllRegionsOnLocation(@NonNull Player player) {
+        return getAllRegionsOnLocation(player.getLocation());
+    }
+
+    @Override
+    public List<RegionObject> getAllRegionsOnLocation(@NonNull Location location) {
+        return _allRegionsOnLocation(location, REVERSE_ORDERING);
+    }
+
+    @Override
+    public RegionObject getHighestRegionOnLocation(@NonNull Player player) {
+        return getHighestRegionOnLocation(player.getLocation());
+    }
+
+    @Override
+    public RegionObject getHighestRegionOnLocation(@NonNull Location location) {
+        final List<RegionObject> allRegionsOnLocation = getAllRegionsOnLocation(location);
+        if (allRegionsOnLocation.isEmpty()) return null;
+        return allRegionsOnLocation.get(0);
+    }
+
+    @Override
+    public Set<RegionObject> getAllRegionsContainer(@NonNull World world) {
         return (Set<RegionObject>) registry.get(world);
     }
 }

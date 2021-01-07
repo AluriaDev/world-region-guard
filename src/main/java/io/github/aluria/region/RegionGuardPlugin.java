@@ -49,8 +49,8 @@ public final class RegionGuardPlugin extends JavaPlugin {
 //        final MessageProvider messageProvider = new MessageProvider(configuration);
 //        new SelectorContainerJob(this);
 
-        registerListeners(new RegionInteractMark(), new TriggerPlayerMove());
         registerService(this.regionRegistry = new RegionRegistryImpl());
+        registerListeners(new TriggerPlayerMove(regionRegistry), new RegionInteractMark());
         registerCommands();
     }
 

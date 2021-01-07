@@ -27,7 +27,7 @@ public interface RegionRegistry {
      * @param name  name of the region you want to purchase
      * @return requested region instance
      */
-    RegionObject getRegion(@NonNull World world, @NonNull String name);
+    RegionObject getRegionByName(@NonNull World world, @NonNull String name);
 
     /**
      * Removes a region from the registries, using its name
@@ -50,27 +50,69 @@ public interface RegionRegistry {
      * Obtains the region where the player is located, verified through its current location
      *
      * @param player instance of a valid {@link Player}
-     * @return a random region (registration preference, which was first registered)
+     * @return the first occurrence within the AABB (Axis-Aligned Bounding Box)
      */
-    RegionObject getPlayerRegion(@NonNull Player player);
+    RegionObject getOneRegionOnLocation(@NonNull Player player);
+
+    /**
+     * Obtains the region where the player is located, verified through its current location
+     *
+     * @param location instance of {@link Location}
+     * @return the first occurrence within the AABB (Axis-Aligned Bounding Box)
+     */
+    RegionObject getOneRegionOnLocation(@NonNull Location location);
+
+    /**
+     * Obtains all regions where the player is located, verified through its current location
+     *
+     * @param player instance of a valid {@link Player}
+     * @return get all the regions that exist in your current location with non-ordering sort priority
+     */
+    List<RegionObject> getAllRegionsOnLocationNonOrdering(@NonNull Player player);
+
+    /**
+     * Obtains all regions where the player is located, verified through its current location
+     *
+     * @param location instance of {@link Location}
+     * @return get all the regions that exist in your current location with non-ordering sort priority
+     */
+    List<RegionObject> getAllRegionsOnLocationNonOrdering(@NonNull Location location);
 
     /**
      * Obtains all regions where the player is located, verified through its current location
      *
      * @param player instance of a valid {@link Player}
      * @return get all the regions that exist in your current location
-     * but unlike the {@link RegionRegistry#getPlayerRegions(Player)} method it returns from the smallest to the largest, in its natural order
+     * but unlike the {@link RegionRegistry#getAllRegionsOnLocation(Player)} method it returns from the smallest to the largest, in its natural order
      */
-    List<RegionObject> getPlayerRegionsNatural(@NonNull Player player);
+    List<RegionObject> getAllRegionsOnLocationNaturally(@NonNull Player player);
+
+    /**
+     * Obtains all regions where the player is located, verified through its current location
+     *
+     * @param location instance of {@link Location}
+     * @return get all the regions that exist in your current location
+     * but unlike the {@link RegionRegistry#getAllRegionsOnLocation(Location)} method it returns from the smallest to the largest, in its natural order
+     */
+    List<RegionObject> getAllRegionsOnLocationNaturally(@NonNull Location location);
 
     /**
      * Obtains all regions where the player is located, verified through its current location
      *
      * @param player instance of a valid {@link Player}
      * @return get all the regions that exist in your current location
-     * but unlike the {@link RegionRegistry#getPlayerRegionsNatural(Player)} method it returns from highest to lowest, in reverse order
+     * but unlike the {@link RegionRegistry#getAllRegionsOnLocationNaturally(Player)} method it returns from highest to lowest, in reverse order
      */
-    List<RegionObject> getPlayerRegions(@NonNull Player player);
+    List<RegionObject> getAllRegionsOnLocation(@NonNull Player player);
+
+    /**
+     * Obtains all regions where the player is located, verified through its current location
+     *
+     * @param location instance of {@link Location}
+     * @return get all the regions that exist in your current location
+     * but unlike the {@link RegionRegistry#getAllRegionsOnLocationNaturally(Location)} method it returns from highest to lowest, in reverse order
+     */
+    List<RegionObject> getAllRegionsOnLocation(@NonNull Location location);
 
     /**
      * Obtains the region where the player is located, verified through its current location
@@ -78,7 +120,15 @@ public interface RegionRegistry {
      * @param player instance of a valid {@link Player}
      * @return a region with higher priority, in reverse order. Ex: [spawn: priority = 10, lobby = priority = 20] will return the lobby for having a higher priority than spawn
      */
-    RegionObject getPlayerRegionHigh(@NonNull Player player);
+    RegionObject getHighestRegionOnLocation(@NonNull Player player);
+
+    /**
+     * Obtains the region where the player is located, verified through its current location
+     *
+     * @param location instance of {@link Location}
+     * @return a region with higher priority, in reverse order. Ex: [spawn: priority = 10, lobby = priority = 20] will return the lobby for having a higher priority than spawn
+     */
+    RegionObject getHighestRegionOnLocation(@NonNull Location location);
 
     /**
      * Get all container regions in the world
@@ -86,5 +136,5 @@ public interface RegionRegistry {
      * @param world instance of a valid world, obtained through {@link org.bukkit.Bukkit#getWorld(String)}
      * @return collection with all unique regions (there will be no duplicate regions due to the {@link Set} interface
      */
-    Set<RegionObject> getRegions(@NonNull World world);
+    Set<RegionObject> getAllRegionsContainer(@NonNull World world);
 }
