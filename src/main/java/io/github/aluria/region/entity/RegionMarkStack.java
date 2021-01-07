@@ -1,6 +1,7 @@
 package io.github.aluria.region.entity;
 
 import io.github.aluria.common.utils.ItemBuilder;
+import io.github.aluria.region.util.NBTCompoundUtil;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -30,7 +31,7 @@ public final class RegionMarkStack extends ItemBuilder {
     }
 
     public static boolean isSimilar(ItemStack item) {
-        return STACK_REFERENCE.isSimilar(item);
+        return NBTCompoundUtil.hasCompoundEntryTag(item, "aluria.region.mark");
     }
 
     private String[] getLore() {
