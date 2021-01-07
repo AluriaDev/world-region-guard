@@ -1,6 +1,6 @@
 connection:
   mysql:
     hostname: "localhost:3306"
-    database: aluriadev
+    database: aluria-dev
     user: root
-    password:
+    password: ""

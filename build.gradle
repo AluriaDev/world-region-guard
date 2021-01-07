@@ -10,16 +10,17 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     mavenLocal()
-    //maven { url = "https://jitpack.io" }
-    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = "https://jitpack.io" }
+//    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+//    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT'
     compileOnly 'io.github.aluria.common:common-bukkit:1.0-SNAPSHOT'
     compileOnly 'co.aikar:acf-bukkit:0.5.0-SNAPSHOT'
-    //implementation 'com.github.zkingboos.universalwrapper:mysql-wrapper:4.0.0-SNAPSHOT'
+    implementation 'com.github.zkingboos.universalwrapper:mysql-wrapper-bukkit:4.0.3-SNAPSHOT'
     implementation 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
 }

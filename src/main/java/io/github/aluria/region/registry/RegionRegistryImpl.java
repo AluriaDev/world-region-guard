@@ -1,6 +1,8 @@
 package io.github.aluria.region.registry;
 
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
 import io.github.aluria.region.api.registry.RegionRegistry;
 import io.github.aluria.region.entity.RegionObject;
 import lombok.Getter;
@@ -9,13 +11,17 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 public final class RegionRegistryImpl implements RegionRegistry {
 
     private final static Ordering<Object> REVERSE_ORDERING;
     private final static Ordering<Comparable<?>> NATURAL_ORDERING;
+
     static {
         REVERSE_ORDERING = Ordering.from(Collections.reverseOrder());
         NATURAL_ORDERING = Ordering.natural();

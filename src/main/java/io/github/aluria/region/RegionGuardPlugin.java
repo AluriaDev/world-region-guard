@@ -4,14 +4,20 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.RegisteredCommand;
+import dev.king.universal.shared.api.JdbcProvider;
+import dev.king.universal.wrapper.mysql.MysqlProvider;
+import dev.king.universal.wrapper.mysql.api.MysqlCredential;
 import io.github.aluria.region.api.registry.RegionRegistry;
 import io.github.aluria.region.command.RegionFactoryCommand;
+import io.github.aluria.region.listener.RegionInteractMark;
 import io.github.aluria.region.listener.TriggerPlayerMove;
 import io.github.aluria.region.registry.RegionRegistryImpl;
 import io.github.aluria.region.selector.SelectorContainerWorld;
+import io.github.aluria.region.util.sql.reader.SQLReader;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Server;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
@@ -23,24 +29,35 @@ import java.util.Locale;
 @Getter
 public final class RegionGuardPlugin extends JavaPlugin {
 
+    private PluginManager pluginManager;
     private RegionRegistry regionRegistry;
     private ServicesManager servicesManager;
+    private JdbcProvider jdbcProvider;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         final Server server = getServer();
-        final PluginManager pluginManager = server.getPluginManager();
+        this.pluginManager = server.getPluginManager();
         this.servicesManager = server.getServicesManager();
 
-//        final Configuration configuration = getConfig();
-//        final JdbcProvider jdbcProvider = getProvider(configuration);
+        final SQLReader sqlReader = new SQLReader(this);
+        //this.jdbcProvider = getProvider();
+
+        //if(!jdbcProvider.openConnection()) return;
 
 //        final MessageProvider messageProvider = new MessageProvider(configuration);
 //        new SelectorContainerJob(this);
-        pluginManager.registerEvents(new TriggerPlayerMove(), this);
+
+        registerListeners(new RegionInteractMark(), new TriggerPlayerMove());
         registerService(this.regionRegistry = new RegionRegistryImpl());
         registerCommands();
+    }
+
+    @Override
+    public void onDisable() {
+        //jdbcProvider.closeConnection();
+        servicesManager.unregisterAll(this);
     }
 
     private void registerCommands() {
@@ -50,6 +67,12 @@ public final class RegionGuardPlugin extends JavaPlugin {
         commandManager.registerDependency(SelectorContainerWorld.class, SelectorContainerWorld.get());
         commandManager.registerCommand(new RegionFactoryCommand());
         commandManager.setDefaultExceptionHandler(this::exceptionHandler);
+    }
+
+    private void registerListeners(@NonNull Listener... listeners) {
+        for (Listener listener : listeners) {
+            pluginManager.registerEvents(listener, this);
+        }
     }
 
     private boolean exceptionHandler(BaseCommand command, RegisteredCommand<?> registeredCommand, CommandIssuer sender, List<String> args, Throwable t) {
@@ -66,11 +89,11 @@ public final class RegionGuardPlugin extends JavaPlugin {
         );
     }
 
-//    private JdbcProvider getProvider(@NonNull Configuration configuration) {
-//        return MysqlProvider.from(
-//          MysqlCredential.fromConfiguration(
-//            configuration.getConfigurationSection("connection.mysql")
-//          )
-//        ).preOpen();
-//    }
+    private JdbcProvider getProvider() {
+        return MysqlProvider.from(
+          MysqlCredential.fromConfiguration(
+            getConfig().getConfigurationSection("connection.mysql")
+          )
+        ).preOpen();
+    }
 }

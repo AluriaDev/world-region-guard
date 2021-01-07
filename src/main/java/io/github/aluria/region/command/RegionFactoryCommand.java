@@ -3,6 +3,7 @@ package io.github.aluria.region.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import io.github.aluria.region.api.registry.RegionRegistry;
+import io.github.aluria.region.entity.RegionMarkStack;
 import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.selector.SelectorContainerWorld;
 import lombok.NonNull;
@@ -16,10 +17,14 @@ import org.bukkit.entity.Player;
 @Description("Aluria world region command")
 public final class RegionFactoryCommand extends BaseCommand {
 
-    private final static String[] HEADER_HELP_USAGE = new String[]{
-      "",
-      " §c§lALURIA §c- World Region Guard (Help)",
-    };
+    private final static String[] HEADER_HELP_USAGE;
+
+    static {
+        HEADER_HELP_USAGE = new String[]{
+          "",
+          " §c§lALURIA §c- World Region Guard (Help)",
+        };
+    }
 
     @Dependency
     private SelectorContainerWorld containerWorld;
@@ -86,6 +91,7 @@ public final class RegionFactoryCommand extends BaseCommand {
           "  §r- §7§oAs marcações precisam obrigatoriamente estar no mesmo mundo.",
           ""
         ));
+        player.getInventory().addItem(RegionMarkStack.getStackReference());
     }
 
     private RegionObject createRegion(@NonNull String regionName, @NonNull Location firstLocation, @NonNull Location secondLocation, @NonNull int priority) {
