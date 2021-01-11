@@ -1,4 +1,4 @@
-package io.github.aluria.region.api.registry;
+package io.github.aluria.region.registry;
 
 import io.github.aluria.region.entity.RegionObject;
 import lombok.NonNull;

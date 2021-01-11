@@ -1,10 +1,8 @@
 package io.github.aluria.region.registry;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
-import io.github.aluria.region.api.registry.RegionRegistry;
 import io.github.aluria.region.entity.RegionObject;
 import lombok.Getter;
 import lombok.NonNull;

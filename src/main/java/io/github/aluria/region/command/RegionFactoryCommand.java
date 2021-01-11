@@ -2,7 +2,7 @@ package io.github.aluria.region.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import io.github.aluria.region.api.registry.RegionRegistry;
+import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.entity.RegionMarkStack;
 import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.selector.SelectorContainerWorld;
@@ -61,20 +61,17 @@ public final class RegionFactoryCommand extends BaseCommand {
         player.sendMessage(String.format("§aA região §7'%s'§a foi criada com sucesso, com uma prioridade de §7'%s'§a.", regionName, priority));
     }
 
-    @Subcommand("teste")
-    public void onTeste(Player player) {
-        final RegionObject playerRegion = regionRegistry.getOneRegionOnLocation(player);
-        final String regionName = playerRegion != null
-          ? playerRegion.getName() : null;
-        player.sendMessage("Is inside of any region? " + regionName);
-
-        for (RegionObject region : regionRegistry.getAllRegionsOnLocation(player)) {
-            player.sendMessage(String.format("%s with priority %s", region.getName(), region.getPriority()));
+    @Subcommand("remove|remover")
+    @Syntax("<nome da região>")
+    public void onRemove(Player player, @Single String regionName) {
+        final World world = player.getWorld();
+        if (!regionRegistry.hasRegion(world, regionName)) {
+            player.sendMessage(String.format("§cRegião §7'%s' §cnão foi encontrada nos registros deste mundo.", regionName));
+            return;
         }
 
-        for (RegionObject region : regionRegistry.getAllRegionsContainer(player.getWorld())) {
-            player.sendMessage(region.getName());
-        }
+        regionRegistry.removeRegion(world, regionName);
+        player.sendMessage(String.format("§aRegião §7'%s' §afoi removida dos registros deste mundo.", regionName));
     }
 
     @Subcommand("mark|demarcar")

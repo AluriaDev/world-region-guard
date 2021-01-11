@@ -1,7 +1,11 @@
-package io.github.aluria.region.listener;
+package io.github.aluria.region.bus;
 
-import io.github.aluria.region.api.registry.RegionRegistry;
+import io.github.aluria.region.bus.event.PlayerRegionChangeEvent;
+import io.github.aluria.region.bus.event.PlayerRegionJoinEvent;
+import io.github.aluria.region.bus.event.PlayerRegionLeaveEvent;
+import io.github.aluria.region.bus.event.RegionEvent;
 import io.github.aluria.region.entity.RegionObject;
+import io.github.aluria.region.registry.RegionRegistry;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
@@ -22,27 +26,29 @@ public final class TriggerPlayerMove implements Listener {
         final Location to = event.getTo();
         if (isStatelessPlayer(from, to)) return;
 
-        final Player player = event.getPlayer();
-
         final RegionObject fromRegion = regionRegistry.getHighestRegionOnLocation(from);
         final RegionObject toRegion = regionRegistry.getHighestRegionOnLocation(to);
-        if (fromRegion == null && toRegion == null) return;
 
-        if (fromRegion == null) {
-            player.sendMessage("entrou");
-            return;
-        }
+        final Player player = event.getPlayer();
+        final RegionEvent regionEvent = getConditionEvent(player, fromRegion, toRegion);
+        if (regionEvent == null) return;
 
+        regionEvent.perform();
+        if (!regionEvent.isCancelled()) return;
+
+        player.sendMessage("Cant into area");
+        player.teleport(from);
+    }
+
+    private RegionEvent getConditionEvent(@NonNull Player player, RegionObject fromRegion, RegionObject toRegion) {
+        if (fromRegion == toRegion) return null;
         if (toRegion == null) {
-            player.sendMessage("saiu");
-            return;
+            return new PlayerRegionLeaveEvent(player, fromRegion);
         }
-
-        if (fromRegion != toRegion) {
-            player.sendMessage("saiu");
-            player.sendMessage("mudou de regiao");
-            player.sendMessage("entrou");
+        if (fromRegion == null) {
+            return new PlayerRegionJoinEvent(player, toRegion);
         }
+        return new PlayerRegionChangeEvent(player, fromRegion, toRegion);
     }
 
     private boolean isStatelessPlayer(@NonNull Location from, @NonNull Location to) {

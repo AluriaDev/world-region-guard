@@ -1,4 +1,4 @@
-package io.github.aluria.region.listener;
+package io.github.aluria.region.bus;
 
 import io.github.aluria.region.entity.RegionMarkStack;
 import io.github.aluria.region.selector.SelectorContainerWorld;

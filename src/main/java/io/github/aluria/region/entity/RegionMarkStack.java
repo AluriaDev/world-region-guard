@@ -15,14 +15,6 @@ public final class RegionMarkStack extends ItemBuilder {
         STACK_REFERENCE = new RegionMarkStack().build();
     }
 
-    public static ItemStack getStackReference() {
-        return STACK_REFERENCE;
-    }
-
-    public static boolean isSimilar(ItemStack item) {
-        return NBTCompoundUtil.hasCompoundEntryTag(item, "aluria.region.mark");
-    }
-
     public RegionMarkStack() {
         super(Material.STICK);
         name("§cAluria Region - Marker");
@@ -32,6 +24,14 @@ public final class RegionMarkStack extends ItemBuilder {
         compound(nbtTagCompound -> {
             nbtTagCompound.setByte("aluria.region.mark", (byte) 1);
         });
+    }
+
+    public static ItemStack getStackReference() {
+        return STACK_REFERENCE;
+    }
+
+    public static boolean isSimilar(ItemStack item) {
+        return NBTCompoundUtil.hasCompoundEntryTag(item, "aluria.region.mark");
     }
 
     private String[] getLore() {
