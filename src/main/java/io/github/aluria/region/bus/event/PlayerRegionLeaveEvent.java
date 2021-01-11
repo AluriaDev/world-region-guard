@@ -13,11 +13,6 @@ public final class PlayerRegionLeaveEvent extends RegionEvent {
         super(who, from, null, type);
     }
 
-    @Override
-    public void perform() {
-        makeInternal(this);
-    }
-
     public RegionObject getRegion() {
         return getFrom();
     }

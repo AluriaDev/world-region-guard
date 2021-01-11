@@ -13,11 +13,6 @@ public final class PlayerRegionJoinEvent extends RegionEvent {
         super(who, null, to, type);
     }
 
-    @Override
-    public void perform() {
-        makeInternal(this);
-    }
-
     public RegionObject getRegion() {
         return getTo();
     }

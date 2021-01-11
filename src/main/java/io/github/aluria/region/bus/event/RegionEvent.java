@@ -42,7 +42,10 @@ public abstract class RegionEvent extends PlayerEvent implements Cancellable {
         }
     }
 
-    abstract public void perform();
+    public void perform() {
+        makeInternal(this);
+    }
+
 
     @Override
     public HandlerList getHandlers() {
