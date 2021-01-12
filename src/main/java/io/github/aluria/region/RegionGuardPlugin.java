@@ -4,7 +4,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.RegisteredCommand;
-import com.google.common.collect.ImmutableMap;
 import dev.king.universal.shared.api.JdbcProvider;
 import dev.king.universal.wrapper.mysql.MysqlProvider;
 import dev.king.universal.wrapper.mysql.api.MysqlCredential;
@@ -15,7 +14,7 @@ import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.registry.RegionRegistryImpl;
 import io.github.aluria.region.selector.SelectorContainerWorld;
 import io.github.aluria.region.util.sql.reader.SQLReader;
-import io.github.aluria.test.PlayerRegionTest;
+import io.github.aluria.region.bus.test.PlayerRegionTest;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Server;
@@ -48,11 +47,9 @@ public final class RegionGuardPlugin extends JavaPlugin {
             return;
         }
 
-        sqlReader.update("region.create");
-
+        sqlReader.createAllTableSchemas("region");
 //        final MessageProvider messageProvider = new MessageProvider(configuration);
 //        new SelectorContainerJob(this);
-
         registerService(this.regionRegistry = new RegionRegistryImpl());
         registerListeners(
           new TriggerPlayerMove(regionRegistry),

@@ -2,9 +2,9 @@ package io.github.aluria.region.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.entity.RegionMarkStack;
 import io.github.aluria.region.entity.RegionObject;
+import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.selector.SelectorContainerWorld;
 import lombok.NonNull;
 import org.apache.commons.lang.ArrayUtils;

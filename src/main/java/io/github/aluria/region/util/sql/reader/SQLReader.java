@@ -59,6 +59,12 @@ public final class SQLReader {
         return provider.openConnection();
     }
 
+    public void createAllTableSchemas(String... paths) {
+        for (String path : paths) {
+            update(path.concat(".create"));
+        }
+    }
+
     public void update(@NonNull String path, Object... objects) {
         provider.update(getQuery(path), objects);
     }

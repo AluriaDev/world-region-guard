@@ -1,4 +1,4 @@
-package io.github.aluria.test;
+package io.github.aluria.region.bus.test;
 
 import io.github.aluria.region.bus.event.PlayerRegionChangeEvent;
 import io.github.aluria.region.bus.event.PlayerRegionJoinEvent;
