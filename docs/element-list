@@ -7,6 +7,6 @@ io.github.aluria.region.message
 io.github.aluria.region.registry
 io.github.aluria.region.selector
 io.github.aluria.region.util
-io.github.aluria.region.util.serialization
+io.github.aluria.region.entity.serialization
 io.github.aluria.region.util.sql.reader
 io.github.aluria.test

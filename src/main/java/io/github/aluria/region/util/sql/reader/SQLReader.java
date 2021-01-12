@@ -1,14 +1,18 @@
 package io.github.aluria.region.util.sql.reader;
 
+import dev.king.universal.shared.api.JdbcProvider;
+import dev.king.universal.shared.api.functional.SafetyFunction;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.Plugin;
 
+import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * @author SaiintBrisson (c)
+ * @author zkingboos, SaiintBrisson
  */
 @Getter
 @RequiredArgsConstructor
@@ -17,7 +21,10 @@ public final class SQLReader {
     @NonNull
     private final Plugin plugin;
 
-    private final HashMap<String, SQLReaderEntity> sqlReaderEntities = new HashMap<>();
+    @NonNull
+    private final JdbcProvider provider;
+
+    private final Map<String, SQLReaderEntity> sqlReaderEntities = new HashMap<>();
 
     public String getQuery(@NonNull String path) {
         if (!path.contains(".")) {
@@ -25,8 +32,9 @@ public final class SQLReader {
         }
 
         final String[] constraintPathKeys = path.split("\\.");
-        return getQueryParent(constraintPathKeys[0])
-          .getLazyQuery(constraintPathKeys[1]);
+        return getQueryParent(
+          constraintPathKeys[0]
+        ).getLazyQuery(constraintPathKeys[1]);
     }
 
     public SQLReaderEntity getRootParent() {
@@ -41,5 +49,21 @@ public final class SQLReader {
         sqlReaderEntities.put(parent, sqlReaderEntity);
 
         return sqlReaderEntity;
+    }
+
+    public void closeConnection() {
+        provider.closeConnection();
+    }
+
+    public boolean openConnection() {
+        return provider.openConnection();
+    }
+
+    public void update(@NonNull String path, Object... objects) {
+        provider.update(getQuery(path), objects);
+    }
+
+    public <K> K query(@NonNull String path, @NonNull SafetyFunction<ResultSet, K> consumer, Object... objects) {
+        return provider.query(getQuery(path), consumer, objects);
     }
 }

@@ -3,13 +3,11 @@ package io.github.aluria.region.entity;
 import io.github.aluria.common.utils.Cuboid;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 @Data
-@ToString
 @Accessors(chain = true)
 public final class RegionObject implements Comparable<RegionObject> {
 

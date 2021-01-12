@@ -1,6 +1,6 @@
 package io.github.aluria.region.util.sql.reader;
 
-import io.github.aluria.region.util.serialization.IOUtil;
+import io.github.aluria.region.util.IOUtil;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.Plugin;
@@ -24,10 +24,13 @@ public final class SQLReaderEntity {
         if (!path.endsWith(".sql")) path += ".sql";
         final String rawParentPath = String.format("sql/%s/%s", parent, path);
 
-        final InputStream resourceStream = plugin.getResource(rawParentPath);
-        queryContent = IOUtil.readInputStream(resourceStream);
+        try (InputStream resourceStream = plugin.getResource(rawParentPath)) {
+            queryContent = IOUtil.readInputStream(resourceStream);
+            rootParent.put(path, queryContent);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
 
-        rootParent.put(path, queryContent);
         return queryContent;
     }
 }

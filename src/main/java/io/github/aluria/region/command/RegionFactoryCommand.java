@@ -93,8 +93,11 @@ public final class RegionFactoryCommand extends BaseCommand {
     }
 
     private RegionObject createRegion(@NonNull String regionName, @NonNull Location firstLocation, @NonNull Location secondLocation, @NonNull int priority) {
-        return new RegionObject(regionName, firstLocation, secondLocation)
-          .setPriority(priority);
+        return new RegionObject(
+          regionName,
+          firstLocation,
+          secondLocation
+        ).setPriority(priority);
     }
 
     private String[] helpUsage(String... text) {

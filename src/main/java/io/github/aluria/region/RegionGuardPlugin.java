@@ -4,13 +4,14 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.RegisteredCommand;
+import com.google.common.collect.ImmutableMap;
 import dev.king.universal.shared.api.JdbcProvider;
 import dev.king.universal.wrapper.mysql.MysqlProvider;
 import dev.king.universal.wrapper.mysql.api.MysqlCredential;
-import io.github.aluria.region.registry.RegionRegistry;
-import io.github.aluria.region.command.RegionFactoryCommand;
 import io.github.aluria.region.bus.RegionInteractMark;
 import io.github.aluria.region.bus.TriggerPlayerMove;
+import io.github.aluria.region.command.RegionFactoryCommand;
+import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.registry.RegionRegistryImpl;
 import io.github.aluria.region.selector.SelectorContainerWorld;
 import io.github.aluria.region.util.sql.reader.SQLReader;
@@ -30,10 +31,10 @@ import java.util.Locale;
 @Getter
 public final class RegionGuardPlugin extends JavaPlugin {
 
-    private PluginManager pluginManager;
-    private RegionRegistry regionRegistry;
     private ServicesManager servicesManager;
-    private JdbcProvider jdbcProvider;
+    private RegionRegistry regionRegistry;
+    private PluginManager pluginManager;
+    private SQLReader sqlReader;
 
     @Override
     public void onEnable() {
@@ -41,24 +42,30 @@ public final class RegionGuardPlugin extends JavaPlugin {
         final Server server = getServer();
         this.pluginManager = server.getPluginManager();
         this.servicesManager = server.getServicesManager();
+        this.sqlReader = new SQLReader(this, getProvider());
+        if (!sqlReader.openConnection()) {
+            getLogger().severe("Can't to the database");
+            return;
+        }
 
-        final SQLReader sqlReader = new SQLReader(this);
-        //this.jdbcProvider = getProvider();
-
-        //if(!jdbcProvider.openConnection()) return;
+        sqlReader.update("region.create");
 
 //        final MessageProvider messageProvider = new MessageProvider(configuration);
 //        new SelectorContainerJob(this);
 
         registerService(this.regionRegistry = new RegionRegistryImpl());
-        registerListeners(new TriggerPlayerMove(regionRegistry), new RegionInteractMark(), new PlayerRegionTest());
+        registerListeners(
+          new TriggerPlayerMove(regionRegistry),
+          new RegionInteractMark(),
+          new PlayerRegionTest()
+        );
         registerCommands();
     }
 
     @Override
     public void onDisable() {
-        //jdbcProvider.closeConnection();
         servicesManager.unregisterAll(this);
+        sqlReader.closeConnection();
     }
 
     private void registerCommands() {
@@ -95,6 +102,6 @@ public final class RegionGuardPlugin extends JavaPlugin {
           MysqlCredential.fromConfiguration(
             getConfig().getConfigurationSection("connection.mysql")
           )
-        ).preOpen();
+        );
     }
 }
