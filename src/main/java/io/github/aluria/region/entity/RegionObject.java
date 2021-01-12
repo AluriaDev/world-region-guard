@@ -5,13 +5,14 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 @Data
 @Accessors(chain = true)
 public final class RegionObject implements Comparable<RegionObject> {
 
-    private final String worldBaseName;
+    private final World worldBase;
     private final String name;
     private final Location start;
     private final Location end;
@@ -19,16 +20,12 @@ public final class RegionObject implements Comparable<RegionObject> {
     private String permission;
     private int priority = 1;
 
-    public RegionObject(@NonNull String name, @NonNull Location start, @NonNull Location end) {
-        this.worldBaseName = start.getWorld().getName();
+    RegionObject(@NonNull String name, @NonNull Location start, @NonNull Location end) {
+        this.worldBase = start.getWorld();
         this.name = name;
         this.start = start;
         this.end = end;
         this.cuboid = new Cuboid(start, end);
-    }
-
-    public boolean equals(String regionName) {
-        return name.equalsIgnoreCase(regionName);
     }
 
     public boolean isLocationInside(@NonNull Location location) {
@@ -39,12 +36,16 @@ public final class RegionObject implements Comparable<RegionObject> {
         return isLocationInside(player.getLocation());
     }
 
+    public boolean equals(String regionName) {
+        return name.equalsIgnoreCase(regionName);
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || object.getClass() != getClass()) return false;
         final RegionObject other = (RegionObject) object;
-        if (!other.getWorldBaseName().equalsIgnoreCase(worldBaseName)) return false;
+        if (!other.getWorldBase().equals(worldBase)) return false;
         return equals(other.getName());
     }
 

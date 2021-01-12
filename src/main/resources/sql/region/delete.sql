@@ -1,0 +1,1 @@
+delete from region where world_name=? and name=?;

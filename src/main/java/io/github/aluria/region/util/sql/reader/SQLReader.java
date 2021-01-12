@@ -9,6 +9,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,5 +72,9 @@ public final class SQLReader {
 
     public <K> K query(@NonNull String path, @NonNull SafetyFunction<ResultSet, K> consumer, Object... objects) {
         return provider.query(getQuery(path), consumer, objects);
+    }
+
+    public <K> List<K> map(@NonNull String path, @NonNull SafetyFunction<ResultSet, K> function, Object... objects) {
+        return provider.map(getQuery(path), function, objects);
     }
 }

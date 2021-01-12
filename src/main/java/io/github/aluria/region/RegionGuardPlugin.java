@@ -9,12 +9,12 @@ import dev.king.universal.wrapper.mysql.MysqlProvider;
 import dev.king.universal.wrapper.mysql.api.MysqlCredential;
 import io.github.aluria.region.bus.RegionInteractMark;
 import io.github.aluria.region.bus.TriggerPlayerMove;
+import io.github.aluria.region.bus.test.PlayerRegionTest;
 import io.github.aluria.region.command.RegionFactoryCommand;
 import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.registry.RegionRegistryImpl;
 import io.github.aluria.region.selector.SelectorContainerWorld;
 import io.github.aluria.region.util.sql.reader.SQLReader;
-import io.github.aluria.region.bus.test.PlayerRegionTest;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Server;
@@ -38,19 +38,22 @@ public final class RegionGuardPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        final Server server = getServer();
-        this.pluginManager = server.getPluginManager();
-        this.servicesManager = server.getServicesManager();
         this.sqlReader = new SQLReader(this, getProvider());
         if (!sqlReader.openConnection()) {
-            getLogger().severe("Can't to the database");
+            getLogger().severe("Can't connect to the database");
             return;
         }
 
         sqlReader.createAllTableSchemas("region");
+
+        final Server server = getServer();
+        this.pluginManager = server.getPluginManager();
+        this.servicesManager = server.getServicesManager();
+        this.regionRegistry = new RegionRegistryImpl(sqlReader);
+
 //        final MessageProvider messageProvider = new MessageProvider(configuration);
 //        new SelectorContainerJob(this);
-        registerService(this.regionRegistry = new RegionRegistryImpl());
+        registerService(regionRegistry);
         registerListeners(
           new TriggerPlayerMove(regionRegistry),
           new RegionInteractMark(),

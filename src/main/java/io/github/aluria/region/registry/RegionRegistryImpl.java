@@ -4,6 +4,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import io.github.aluria.region.entity.RegionObject;
+import io.github.aluria.region.entity.serialization.RegionObjectDeserializer;
+import io.github.aluria.region.entity.serialization.RegionObjectQuery;
+import io.github.aluria.region.entity.serialization.RegionObjectSerializer;
+import io.github.aluria.region.util.sql.reader.SQLReader;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -23,10 +27,17 @@ public final class RegionRegistryImpl implements RegionRegistry {
         NATURAL_ORDERING = Ordering.natural();
     }
 
+    private final RegionObjectDeserializer regionObjectDeserializer;
+    private final RegionObjectSerializer regionObjectSerializer;
     private final Multimap<World, RegionObject> registry;
+    private final RegionObjectQuery regionObjectQuery;
 
-    public RegionRegistryImpl() {
+    public RegionRegistryImpl(@NonNull SQLReader reader) {
+        this.regionObjectDeserializer = new RegionObjectDeserializer(reader);
+        this.regionObjectSerializer = new RegionObjectSerializer();
+        this.regionObjectQuery = new RegionObjectQuery(reader);
         this.registry = HashMultimap.create();
+        regionObjectDeserializer.loadAllIntoRegistry(registry);
     }
 
     @Override
@@ -71,6 +82,7 @@ public final class RegionRegistryImpl implements RegionRegistry {
         final RegionObject region = getRegionByName(world, name);
         if (region != null) {
             registry.remove(world, region);
+            regionObjectQuery.deleteRegionFromDatabase(region);
         }
     }
 
