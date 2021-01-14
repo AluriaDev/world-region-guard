@@ -22,12 +22,11 @@ public abstract class RegionEvent extends PlayerEvent implements Cancellable {
         PLUGIN_MANAGER = Bukkit.getPluginManager();
     }
 
-    @Setter
-    private boolean cancelled = false;
-
     private final RegionObject from;
     private final RegionObject to;
     private final RegionType type;
+    @Setter
+    private boolean cancelled = false;
 
     public RegionEvent(Player who, RegionObject from, RegionObject to, RegionType type) {
         super(who);

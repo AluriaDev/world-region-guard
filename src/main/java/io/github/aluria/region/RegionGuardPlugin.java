@@ -97,8 +97,8 @@ public final class RegionGuardPlugin extends JavaPlugin {
         );
     }
 
-    private JdbcProvider getProvider() {
-        return MysqlProvider.from(
+    private MysqlProvider getProvider() {
+        return (MysqlProvider) MysqlProvider.from(
           MysqlCredential.fromConfiguration(
             getConfig().getConfigurationSection("connection.mysql")
           )

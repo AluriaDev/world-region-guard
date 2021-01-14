@@ -1,6 +1,7 @@
 package io.github.aluria.region.command;
 
 import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import io.github.aluria.region.entity.RegionMarkStack;
 import io.github.aluria.region.entity.RegionObject;
@@ -32,6 +33,12 @@ public final class RegionFactoryCommand extends BaseCommand {
 
     @Dependency
     private RegionRegistry regionRegistry;
+
+    @Default
+    @HelpCommand
+    public void onHelp(Player player, CommandHelp help) {
+        help.showHelp();
+    }
 
     @Subcommand("create|criar")
     @Syntax("<nome da região> [prioridade]")

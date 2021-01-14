@@ -20,6 +20,6 @@ public final class PlayerRegionTest implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     private void onPlayerRegionJoin(PlayerRegionJoinEvent event) {
-          event.getPlayer().sendMessage(event.getRegion().getName() + " joined");
+        event.getPlayer().sendMessage(event.getRegion().getName() + " joined");
     }
 }

@@ -4,12 +4,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import io.github.aluria.region.entity.RegionObject;
-import io.github.aluria.region.entity.serialization.RegionObjectDeserializer;
-import io.github.aluria.region.entity.serialization.RegionObjectQuery;
-import io.github.aluria.region.entity.serialization.RegionObjectSerializer;
 import io.github.aluria.region.util.sql.reader.SQLReader;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -17,7 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 @Getter
-public final class RegionRegistryImpl implements RegionRegistry {
+public final class RegionRegistryImpl extends RegionRegistry {
 
     private final static Ordering<Object> REVERSE_ORDERING;
     private final static Ordering<Comparable<?>> NATURAL_ORDERING;
@@ -27,22 +25,32 @@ public final class RegionRegistryImpl implements RegionRegistry {
         NATURAL_ORDERING = Ordering.natural();
     }
 
-    private final RegionObjectDeserializer regionObjectDeserializer;
-    private final RegionObjectSerializer regionObjectSerializer;
     private final Multimap<World, RegionObject> registry;
-    private final RegionObjectQuery regionObjectQuery;
 
-    public RegionRegistryImpl(@NonNull SQLReader reader) {
-        this.regionObjectDeserializer = new RegionObjectDeserializer(reader);
-        this.regionObjectSerializer = new RegionObjectSerializer();
-        this.regionObjectQuery = new RegionObjectQuery(reader);
+    public RegionRegistryImpl(@NonNull SQLReader sqlReader) {
+        super(sqlReader);
         this.registry = HashMultimap.create();
-        regionObjectDeserializer.loadAllIntoRegistry(registry);
+        loadAllIntoRegistry(registry);
     }
 
     @Override
     public void registerRegion(@NonNull World world, @NonNull RegionObject regionObject) {
         registry.put(world, regionObject);
+        save(regionObject);
+    }
+
+    @Override
+    public void removeRegion(@NonNull World world, @NonNull String name) {
+        final RegionObject region = getRegionByName(world, name);
+        if (region != null) {
+            registry.remove(world, region);
+            delete(region);
+        }
+    }
+
+    @Override
+    public boolean hasRegion(@NonNull World world, @NonNull String name) {
+        return getRegionByName(world, name) != null;
     }
 
     @Override
@@ -73,22 +81,8 @@ public final class RegionRegistryImpl implements RegionRegistry {
             }
         }
 
-        if (ordering == null) return new ArrayList<>(regionObjects);
+        if (ordering == null) return new LinkedList<>(regionObjects);
         return ordering.sortedCopy(regionObjects);
-    }
-
-    @Override
-    public void removeRegion(@NonNull World world, @NonNull String name) {
-        final RegionObject region = getRegionByName(world, name);
-        if (region != null) {
-            registry.remove(world, region);
-            regionObjectQuery.deleteRegionFromDatabase(region);
-        }
-    }
-
-    @Override
-    public boolean hasRegion(@NonNull World world, @NonNull String name) {
-        return getRegionByName(world, name) != null;
     }
 
     @Override
@@ -139,7 +133,12 @@ public final class RegionRegistryImpl implements RegionRegistry {
     }
 
     @Override
-    public Set<RegionObject> getAllRegionsContainer(@NonNull World world) {
-        return (Set<RegionObject>) registry.get(world);
+    public List<RegionObject> getAllRegionsContainer(@NonNull World world) {
+        return new LinkedList<>(registry.get(world));
+    }
+
+    @Override
+    public void saveAll(@NonNull World world) {
+        saveAll(getAllRegionsContainer(world));
     }
 }

@@ -1,13 +1,16 @@
 package io.github.aluria.region.util.sql.reader;
 
-import dev.king.universal.shared.api.JdbcProvider;
+import dev.king.universal.shared.api.batch.ComputedBatchQuery;
+import dev.king.universal.shared.api.functional.SafetyBiConsumer;
 import dev.king.universal.shared.api.functional.SafetyFunction;
+import dev.king.universal.wrapper.mysql.MysqlProvider;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.Plugin;
 
 import java.sql.ResultSet;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +26,7 @@ public final class SQLReader {
     private final Plugin plugin;
 
     @NonNull
-    private final JdbcProvider provider;
+    private final MysqlProvider provider;
 
     private final Map<String, SQLReaderEntity> sqlReaderEntities = new HashMap<>();
 
@@ -66,8 +69,8 @@ public final class SQLReader {
         }
     }
 
-    public void update(@NonNull String path, Object... objects) {
-        provider.update(getQuery(path), objects);
+    public int update(@NonNull String path, Object... objects) {
+        return provider.update(getQuery(path), objects);
     }
 
     public <K> K query(@NonNull String path, @NonNull SafetyFunction<ResultSet, K> consumer, Object... objects) {
@@ -76,5 +79,9 @@ public final class SQLReader {
 
     public <K> List<K> map(@NonNull String path, @NonNull SafetyFunction<ResultSet, K> function, Object... objects) {
         return provider.map(getQuery(path), function, objects);
+    }
+
+    public <T> int[] batch(@NonNull String path, SafetyBiConsumer<T, ComputedBatchQuery> batchFunction, Collection<T> collection) {
+        return provider.batch(getQuery(path), batchFunction, collection);
     }
 }

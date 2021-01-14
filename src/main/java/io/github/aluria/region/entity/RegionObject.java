@@ -1,6 +1,7 @@
 package io.github.aluria.region.entity;
 
 import io.github.aluria.common.utils.Cuboid;
+import io.github.aluria.region.util.LocationUtil;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
@@ -26,6 +27,18 @@ public final class RegionObject implements Comparable<RegionObject> {
         this.start = start;
         this.end = end;
         this.cuboid = new Cuboid(start, end);
+    }
+
+    public String getWorldBaseName() {
+        return worldBase.getName();
+    }
+
+    public String getRawLocationStart() {
+        return LocationUtil.serialize(start);
+    }
+
+    public String getRawLocationEnd() {
+        return LocationUtil.serialize(end);
     }
 
     public boolean isLocationInside(@NonNull Location location) {
