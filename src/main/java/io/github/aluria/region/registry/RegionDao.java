@@ -7,17 +7,15 @@ import io.github.aluria.region.util.LocationUtil;
 import io.github.aluria.region.util.sql.reader.SQLReader;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Getter
 public abstract class RegionDao {
@@ -36,25 +34,28 @@ public abstract class RegionDao {
     public void saveAll(@NonNull List<RegionObject> regionObjects) {
         final int[] results = sqlReader.batch(
           "region.update",
-          (regionObject, batchQuery) ->
-            batchQuery.compute(updateObjects(regionObject)),
+          (regionObject, batchQuery) -> batchQuery.compute(updateObjects(regionObject)),
           regionObjects
         );
 
-        final List<RegionObject> collect = IntStream
-          .range(0, results.length)
-          .filter(index -> results[index] == 0)
-          .mapToObj(regionObjects::get)
-          .collect(Collectors.toList());
-
+        final List<RegionObject> collect = fillQueryToInsert(regionObjects, results);
         if (!collect.isEmpty()) {
             sqlReader.batch(
               "region.insert",
-              (regionObject, batchQuery) ->
-                batchQuery.compute(insertObjects(regionObject)),
+              (regionObject, batchQuery) -> batchQuery.compute(insertObjects(regionObject)),
               collect
             );
         }
+    }
+
+    private List<RegionObject> fillQueryToInsert(@NonNull List<RegionObject> regionObjects, int[] results) {
+        final List<RegionObject> objects = new LinkedList<>();
+        for (int index = 0; index < results.length; index++) {
+            if (results[index] == 0) {
+                objects.add(regionObjects.get(index));
+            }
+        }
+        return objects;
     }
 
     /**
