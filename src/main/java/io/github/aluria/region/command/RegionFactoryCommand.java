@@ -36,6 +36,7 @@ public final class RegionFactoryCommand extends BaseCommand {
 
     @Default
     @HelpCommand
+    @Syntax("[página]")
     public void onHelp(Player player, CommandHelp help) {
         help.showHelp();
     }
@@ -66,20 +67,23 @@ public final class RegionFactoryCommand extends BaseCommand {
 
         final RegionObject regionObject = createRegion(regionName, firstLocation, secondLocation, priority);
         regionRegistry.registerRegion(world, regionObject);
-        player.sendMessage(String.format("§aA região §7'%s'§a foi criada com sucesso, com uma prioridade de §7'%s'§a.", regionName, priority));
+
+        send(player, "§aA região §7'%s'§a foi criada com sucesso, com uma prioridade de §7'%s'§a.", regionName, priority);
     }
 
     @Subcommand("remove|remover")
     @Syntax("<nome da região>")
-    public void onRemove(Player player, @Single String regionName) {
-        final World world = player.getWorld();
-        if (!regionRegistry.hasRegion(world, regionName)) {
-            player.sendMessage(String.format("§cRegião §7'%s' §cnão foi encontrada nos registros deste mundo.", regionName));
-            return;
-        }
+    public void onRemove(Player player, RegionObject regionObject) {
+        regionRegistry.removeRegion(player.getWorld(), regionObject);
+        send(player, "§aRegião §7'%s' §afoi removida dos registros deste mundo.", regionObject.getName());
+    }
 
-        regionRegistry.removeRegion(world, regionName);
-        player.sendMessage(String.format("§aRegião §7'%s' §afoi removida dos registros deste mundo.", regionName));
+    @Subcommand("priority|prioridade")
+    @Syntax("<nome da região> <prioridade>")
+    public void onPriority(Player player, RegionObject regionObject, int priority) {
+        regionObject.setPriority(priority);
+        regionRegistry.save(regionObject);
+        send(player, "§aPrioridade da região §7'%s' §afoi definida para §7'%s'§a.", regionObject.getName(), priority);
     }
 
     @Subcommand("mark|demarcar")
@@ -110,5 +114,9 @@ public final class RegionFactoryCommand extends BaseCommand {
 
     private String[] helpUsage(String... text) {
         return (String[]) ArrayUtils.addAll(HEADER_HELP_USAGE, text);
+    }
+
+    private void send(@NonNull Player player, @NonNull String text, Object... objects) {
+        player.sendMessage(String.format(text, objects));
     }
 }

@@ -11,6 +11,8 @@ import io.github.aluria.region.bus.RegionInteractMark;
 import io.github.aluria.region.bus.TriggerPlayerMove;
 import io.github.aluria.region.bus.test.PlayerRegionTest;
 import io.github.aluria.region.command.RegionFactoryCommand;
+import io.github.aluria.region.command.RegionObjectResolver;
+import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.registry.RegionRegistryImpl;
 import io.github.aluria.region.selector.SelectorContainerWorld;
@@ -70,7 +72,12 @@ public final class RegionGuardPlugin extends JavaPlugin {
 
     private void registerCommands() {
         final BukkitCommandManager commandManager = new BukkitCommandManager(this);
+        commandManager.enableUnstableAPI("help");
         commandManager.getLocales().setDefaultLocale(new Locale("pt", "BR"));
+        commandManager
+          .getCommandContexts()
+          .registerContext(RegionObject.class, new RegionObjectResolver(regionRegistry));
+
         commandManager.registerDependency(RegionRegistry.class, regionRegistry);
         commandManager.registerDependency(SelectorContainerWorld.class, SelectorContainerWorld.get());
         commandManager.registerCommand(new RegionFactoryCommand());

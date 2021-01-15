@@ -7,7 +7,6 @@ import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.util.sql.reader.SQLReader;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -41,11 +40,16 @@ public final class RegionRegistryImpl extends RegionRegistry {
 
     @Override
     public void removeRegion(@NonNull World world, @NonNull String name) {
-        final RegionObject region = getRegionByName(world, name);
-        if (region != null) {
-            registry.remove(world, region);
-            delete(region);
+        final RegionObject regionObject = getRegionByName(world, name);
+        if (regionObject != null) {
+            removeRegion(world, regionObject);
         }
+    }
+
+    @Override
+    public void removeRegion(@NonNull World world, @NonNull RegionObject regionObject) {
+        registry.remove(world, regionObject);
+        delete(regionObject);
     }
 
     @Override

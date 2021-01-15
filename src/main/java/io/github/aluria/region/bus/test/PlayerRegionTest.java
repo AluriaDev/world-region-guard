@@ -15,7 +15,7 @@ public final class PlayerRegionTest implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     private void onPlayerRegionChange(PlayerRegionChangeEvent event) {
-        event.getPlayer().sendMessage("region changed");
+        event.getPlayer().sendTitle(String.format("%s -> %s", event.getFrom().getName(), event.getTo().getName()),"");
     }
 
     @EventHandler(ignoreCancelled = true)
