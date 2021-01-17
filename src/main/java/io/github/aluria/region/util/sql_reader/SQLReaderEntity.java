@@ -1,11 +1,13 @@
-package io.github.aluria.region.util.sql.reader;
+package io.github.aluria.region.util.sql_reader;
 
-import io.github.aluria.region.util.IOUtil;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.Plugin;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,12 +27,29 @@ public final class SQLReaderEntity {
         final String rawParentPath = String.format("sql/%s/%s", parent, path);
 
         try (InputStream resourceStream = plugin.getResource(rawParentPath)) {
-            queryContent = IOUtil.readInputStream(resourceStream);
+            queryContent = readInputStream(resourceStream);
             rootParent.put(path, queryContent);
         } catch (Exception exception) {
             exception.printStackTrace();
         }
 
         return queryContent;
+    }
+
+    private String readInputStream(@NonNull InputStream inputStream) {
+        final StringBuilder stringBuilder = new StringBuilder();
+
+        try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream)) {
+            try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line).append("\n");
+                }
+            }
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
+        return stringBuilder.toString();
     }
 }

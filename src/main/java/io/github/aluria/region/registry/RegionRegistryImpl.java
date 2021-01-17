@@ -4,9 +4,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import io.github.aluria.region.entity.RegionObject;
-import io.github.aluria.region.util.sql.reader.SQLReader;
+import io.github.aluria.region.util.sql_reader.SQLReader;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -144,5 +145,12 @@ public final class RegionRegistryImpl extends RegionRegistry {
     @Override
     public void saveAll(@NonNull World world) {
         saveAll(getAllRegionsContainer(world));
+    }
+
+    @Override
+    public void saveAll() {
+        for (World world : Bukkit.getWorlds()) {
+            saveAll(world);
+        }
     }
 }

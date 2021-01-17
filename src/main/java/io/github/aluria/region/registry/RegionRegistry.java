@@ -1,7 +1,7 @@
 package io.github.aluria.region.registry;
 
 import io.github.aluria.region.entity.RegionObject;
-import io.github.aluria.region.util.sql.reader.SQLReader;
+import io.github.aluria.region.util.sql_reader.SQLReader;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -156,4 +156,9 @@ public abstract class RegionRegistry extends RegionDao {
      * @param world instance of a valid world, obtained through {@link org.bukkit.Bukkit#getWorld(String)}
      */
     public abstract void saveAll(@NonNull World world);
+
+    /**
+     * Save all the worlds regions container into the database
+     */
+    public abstract void saveAll();
 }

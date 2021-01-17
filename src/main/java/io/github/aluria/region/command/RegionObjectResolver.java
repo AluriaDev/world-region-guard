@@ -2,7 +2,7 @@ package io.github.aluria.region.command;
 
 import co.aikar.commands.BukkitCommandExecutionContext;
 import co.aikar.commands.InvalidCommandArgument;
-import co.aikar.commands.MessageKeys;
+import co.aikar.commands.annotation.Dependency;
 import co.aikar.commands.contexts.ContextResolver;
 import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.registry.RegionRegistry;

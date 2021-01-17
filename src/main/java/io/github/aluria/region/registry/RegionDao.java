@@ -1,10 +1,10 @@
 package io.github.aluria.region.registry;
 
 import com.google.common.collect.Multimap;
+import io.github.aluria.common.utils.LocationUtil;
 import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.entity.RegionValidator;
-import io.github.aluria.region.util.LocationUtil;
-import io.github.aluria.region.util.sql.reader.SQLReader;
+import io.github.aluria.region.util.sql_reader.SQLReader;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -32,23 +32,24 @@ public abstract class RegionDao {
      * @param regionObjects collection from container world
      */
     public void saveAll(@NonNull List<RegionObject> regionObjects) {
-        final int[] results = sqlReader.batch(
+        if (regionObjects.isEmpty()) return;
+        sqlReader.batch(
           "region.update",
           (regionObject, batchQuery) -> batchQuery.compute(updateObjects(regionObject)),
           regionObjects
-        );
-
-        final List<RegionObject> collect = fillQueryToInsert(regionObjects, results);
-        if (!collect.isEmpty()) {
+        ).thenAcceptAsync(results -> {
+            final List<RegionObject> collect = fillQueryToInsert(regionObjects, results);
+            if (collect == null || collect.isEmpty()) return;
             sqlReader.batch(
               "region.insert",
               (regionObject, batchQuery) -> batchQuery.compute(insertObjects(regionObject)),
               collect
             );
-        }
+        });
     }
 
     private List<RegionObject> fillQueryToInsert(@NonNull List<RegionObject> regionObjects, int[] results) {
+        if (results.length == 0) return null;
         final List<RegionObject> objects = new LinkedList<>();
         for (int index = 0; index < results.length; index++) {
             if (results[index] == 0) {
@@ -64,17 +65,16 @@ public abstract class RegionDao {
      * @param regionObject region instance
      */
     public void save(@NonNull RegionObject regionObject) {
-        final int result = sqlReader.update(
+        sqlReader.update(
           "region.update",
           updateObjects(regionObject)
-        );
-
-        if (result == 0) {
+        ).thenAcceptAsync(status -> {
+            if (status != 0) return;
             sqlReader.update(
               "region.insert",
               insertObjects(regionObject)
             );
-        }
+        });
     }
 
     /**

@@ -1,7 +1,7 @@
 package io.github.aluria.region.entity;
 
 import io.github.aluria.common.utils.ItemBuilder;
-import io.github.aluria.region.util.NBTCompoundUtil;
+import io.github.aluria.common.utils.nbt.NBTCompoundUtil;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;

@@ -1,4 +1,4 @@
-package io.github.aluria.region.util.sql.reader;
+package io.github.aluria.region.util.sql_reader;
 
 import dev.king.universal.shared.api.batch.ComputedBatchQuery;
 import dev.king.universal.shared.api.functional.SafetyBiConsumer;
@@ -14,21 +14,24 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 
-/**
- * @author zkingboos, SaiintBrisson
- */
 @Getter
-@RequiredArgsConstructor
 public final class SQLReader {
 
-    @NonNull
+    private final Map<String, SQLReaderEntity> sqlReaderEntities;
+    private final ForkJoinPool forkJoinPool;
+    private final MysqlProvider provider;
     private final Plugin plugin;
 
-    @NonNull
-    private final MysqlProvider provider;
 
-    private final Map<String, SQLReaderEntity> sqlReaderEntities = new HashMap<>();
+    public SQLReader(@NonNull Plugin plugin, @NonNull MysqlProvider provider) {
+        this.plugin = plugin;
+        this.provider = provider;
+        this.forkJoinPool = new ForkJoinPool(2);
+        this.sqlReaderEntities = new HashMap<>();
+    }
 
     public String getQuery(@NonNull String path) {
         if (!path.contains(".")) {
@@ -56,6 +59,7 @@ public final class SQLReader {
     }
 
     public void closeConnection() {
+        forkJoinPool.shutdown();
         provider.closeConnection();
     }
 
@@ -69,8 +73,8 @@ public final class SQLReader {
         }
     }
 
-    public int update(@NonNull String path, Object... objects) {
-        return provider.update(getQuery(path), objects);
+    private <T> CompletableFuture<T> supplyAsync(@NonNull Supplier<T> supplier) {
+        return CompletableFuture.supplyAsync(supplier, forkJoinPool);
     }
 
     public <K> K query(@NonNull String path, @NonNull SafetyFunction<ResultSet, K> consumer, Object... objects) {
@@ -81,7 +85,15 @@ public final class SQLReader {
         return provider.map(getQuery(path), function, objects);
     }
 
-    public <T> int[] batch(@NonNull String path, SafetyBiConsumer<T, ComputedBatchQuery> batchFunction, Collection<T> collection) {
-        return provider.batch(getQuery(path), batchFunction, collection);
+    public CompletableFuture<Integer> update(@NonNull String path, Object... objects) {
+        return supplyAsync(() -> {
+            return provider.update(getQuery(path), objects);
+        });
+    }
+
+    public <T> CompletableFuture<int[]> batch(@NonNull String path, SafetyBiConsumer<T, ComputedBatchQuery> batchFunction, Collection<T> collection) {
+        return supplyAsync(() -> {
+            return provider.batch(getQuery(path), batchFunction, collection);
+        });
     }
 }

@@ -1,7 +1,7 @@
 package io.github.aluria.region.entity;
 
 import io.github.aluria.common.utils.Cuboid;
-import io.github.aluria.region.util.LocationUtil;
+import io.github.aluria.common.utils.LocationUtil;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
