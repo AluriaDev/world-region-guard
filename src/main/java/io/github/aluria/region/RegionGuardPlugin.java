@@ -20,6 +20,7 @@ import org.bukkit.Bukkit;
 public final class RegionGuardPlugin extends AluriaPlugin {
 
     private SQLReader sqlReader;
+    private RegionRegistry regionRegistry;
 
     @Override
     public void onEnable() {
@@ -32,7 +33,7 @@ public final class RegionGuardPlugin extends AluriaPlugin {
 
         sqlReader.createAllTableSchemas("region");
 
-        final RegionRegistry regionRegistry = new RegionRegistryImpl(sqlReader);
+        this.regionRegistry = new RegionRegistryImpl(sqlReader);
 
 //        final MessageProvider messageProvider = new MessageProvider(configuration);
 //        new SelectorContainerJob(this);
@@ -51,6 +52,7 @@ public final class RegionGuardPlugin extends AluriaPlugin {
 
     @Override
     public void onDisable() {
+        regionRegistry.saveAll();
         Bukkit.getServicesManager().unregisterAll(this);
         sqlReader.closeConnection();
     }
