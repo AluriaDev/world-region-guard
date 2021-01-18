@@ -42,8 +42,8 @@ public final class RegionFactoryCommand extends BaseCommand {
     }
 
     @Subcommand("create|criar")
-    @Syntax("<nome da região> [prioridade]")
-    public void onCreate(Player player, @Single String regionName, @Default("1") int priority) {
+    @Syntax("<nome da região> [prioridade] [nome de exibição da região]")
+    public void onCreate(Player player, @Single String regionName, @Default("1") int priority, @Optional String displayName) {
         final Location firstLocation = containerWorld.getFirstLocation(player);
         final Location secondLocation = containerWorld.getSecondLocation(player);
 
@@ -65,9 +65,12 @@ public final class RegionFactoryCommand extends BaseCommand {
             return;
         }
 
-        final RegionObject regionObject = createRegion(regionName, firstLocation, secondLocation, priority);
-        regionRegistry.registerRegion(world, regionObject);
+        final RegionObject regionObject = RegionValidator
+          .validate(regionName, firstLocation, secondLocation)
+          .setPriority(priority)
+          .setDisplayName(displayName);
 
+        regionRegistry.registerRegion(world, regionObject);
         send(player, "§aA região §7'%s'§a foi criada com sucesso, com uma prioridade de §7'%s'§a.", regionName, priority);
     }
 

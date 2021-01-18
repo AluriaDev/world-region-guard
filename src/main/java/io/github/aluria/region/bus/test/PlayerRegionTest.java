@@ -10,16 +10,16 @@ public final class PlayerRegionTest implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     private void onPlayerRegionLeave(PlayerRegionLeaveEvent event) {
-        event.getPlayer().sendMessage(event.getRegion().getName() + " leave");
+        event.getPlayer().sendMessage(event.getRegion().getDisplayName() + " leave");
     }
 
     @EventHandler(ignoreCancelled = true)
     private void onPlayerRegionChange(PlayerRegionChangeEvent event) {
-        event.getPlayer().sendTitle(String.format("%s -> %s", event.getFrom().getName(), event.getTo().getName()),"");
+        event.getPlayer().sendTitle(String.format("%s -> %s", event.getFrom().getDisplayName(), event.getTo().getDisplayName()),"");
     }
 
     @EventHandler(ignoreCancelled = true)
     private void onPlayerRegionJoin(PlayerRegionJoinEvent event) {
-        event.getPlayer().sendMessage(event.getRegion().getName() + " joined");
+        event.getPlayer().sendMessage(event.getRegion().getDisplayName() + " joined");
     }
 }

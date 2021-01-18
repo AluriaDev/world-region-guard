@@ -18,8 +18,10 @@ public final class RegionObject implements Comparable<RegionObject> {
     private final Location start;
     private final Location end;
     private final Cuboid cuboid;
+
+    private String displayName;
     private String permission;
-    private int priority = 1;
+    private int priority;
 
     RegionObject(@NonNull String name, @NonNull Location start, @NonNull Location end) {
         this.worldBase = start.getWorld();
@@ -27,6 +29,12 @@ public final class RegionObject implements Comparable<RegionObject> {
         this.start = start;
         this.end = end;
         this.cuboid = new Cuboid(start, end);
+        this.priority = 1;
+    }
+
+    public String getDisplayName() {
+        if (displayName == null) return name;
+        return displayName.replaceAll("&", "§");
     }
 
     public String getWorldBaseName() {

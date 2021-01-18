@@ -18,11 +18,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
-public abstract class RegionDao {
+public abstract class RegionDAO {
 
     private final SQLReader sqlReader;
 
-    protected RegionDao(@NonNull SQLReader sqlReader) {
+    protected RegionDAO(@NonNull SQLReader sqlReader) {
         this.sqlReader = sqlReader;
     }
 
@@ -113,22 +113,26 @@ public abstract class RegionDao {
     private RegionObject regionCompute(@NonNull ResultSet resultSet) throws SQLException {
         final String worldName = resultSet.getString("world_name");
         final String regionName = resultSet.getString("name");
-        final String rawLocationStart = resultSet.getString("location_start");
-        final String rawLocationEnd = resultSet.getString("location_end");
-        final int priority = resultSet.getInt("priority");
 
-        final Location locationStart = LocationUtil.deserialize(worldName, rawLocationStart);
-        final Location locationEnd = LocationUtil.deserialize(worldName, rawLocationEnd);
+        final Location locationStart = LocationUtil.deserialize(
+          worldName, resultSet.getString("location_start")
+        );
+
+        final Location locationEnd = LocationUtil.deserialize(
+          worldName, resultSet.getString("location_end")
+        );
 
         return RegionValidator
           .validate(regionName, locationStart, locationEnd)
-          .setPriority(priority);
+          .setPriority(resultSet.getInt("priority"))
+          .setDisplayName(resultSet.getString("display_name"));
     }
 
     private Object[] updateObjects(@NonNull RegionObject regionObject) {
         return new Object[]{
           regionObject.getRawLocationStart(),
           regionObject.getRawLocationEnd(),
+          regionObject.getDisplayName(),
           regionObject.getPriority(),
           regionObject.getWorldBaseName(),
           regionObject.getName()
@@ -141,6 +145,7 @@ public abstract class RegionDao {
           regionObject.getName(),
           regionObject.getRawLocationStart(),
           regionObject.getRawLocationEnd(),
+          regionObject.getDisplayName(),
           regionObject.getPriority()
         };
     }
