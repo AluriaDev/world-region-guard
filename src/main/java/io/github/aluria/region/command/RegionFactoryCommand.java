@@ -105,6 +105,14 @@ public final class RegionFactoryCommand extends BaseCommand {
         );
     }
 
+    @Subcommand("teleportar|teleport")
+    @CommandCompletion("@region")
+    @Syntax("<nome da região>")
+    public void onTeleport(Player player, RegionObject regionObject) {
+        player.teleport(regionObject.getCuboid().getCenter());
+        send(player, "§aTeleportado para o centro da região §7'%s'§a.", regionObject.getName());
+    }
+
     @Subcommand("demarcar|mark")
     public void onMark(Player player) {
         player.sendMessage(helpUsage(
