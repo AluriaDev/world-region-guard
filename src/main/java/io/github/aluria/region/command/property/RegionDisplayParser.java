@@ -1,12 +1,12 @@
-package io.github.aluria.region.logic.properties;
+package io.github.aluria.region.command.property;
 
+import io.github.aluria.region.command.parser.type.RegionStringParser;
 import io.github.aluria.region.entity.RegionObject;
-import io.github.aluria.region.logic.processor.RegionStringProperty;
 import lombok.NonNull;
 
-public final class RegionDisplayProcessor extends RegionStringProperty {
+public final class RegionDisplayParser extends RegionStringParser {
 
-    public RegionDisplayProcessor() {
+    public RegionDisplayParser() {
         super("displayName");
     }
 

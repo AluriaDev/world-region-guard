@@ -1,13 +1,13 @@
-package io.github.aluria.region.logic.processor;
+package io.github.aluria.region.command.parser.type;
 
 import co.aikar.commands.InvalidCommandArgument;
+import io.github.aluria.region.command.parser.RegionPropertyParser;
 import io.github.aluria.region.entity.RegionObject;
-import io.github.aluria.region.logic.RegionPropertyProcessor;
 import lombok.NonNull;
 
-public abstract class RegionIntegerProperty extends RegionPropertyProcessor<Integer> {
+public abstract class RegionIntegerParser extends RegionPropertyParser<Integer> {
 
-    public RegionIntegerProperty(@NonNull String identifier) {
+    public RegionIntegerParser(@NonNull String identifier) {
         super(identifier);
     }
 

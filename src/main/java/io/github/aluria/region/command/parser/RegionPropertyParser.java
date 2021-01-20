@@ -1,4 +1,4 @@
-package io.github.aluria.region.logic;
+package io.github.aluria.region.command.parser;
 
 import co.aikar.commands.InvalidCommandArgument;
 import io.github.aluria.region.entity.RegionObject;
@@ -9,10 +9,11 @@ import lombok.NonNull;
  * Process property for a typed
  */
 @Getter
-public abstract class RegionPropertyProcessor<T> {
+public abstract class RegionPropertyParser<T> {
 
     private final String identifier;
-    public RegionPropertyProcessor(@NonNull String identifier) {
+
+    public RegionPropertyParser(@NonNull String identifier) {
         this.identifier = identifier;
     }
 

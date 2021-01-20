@@ -3,8 +3,8 @@ package io.github.aluria.region.command.completion;
 import co.aikar.commands.BukkitCommandCompletionContext;
 import co.aikar.commands.CommandCompletions.AsyncCommandCompletionHandler;
 import co.aikar.commands.InvalidCommandArgument;
-import io.github.aluria.region.command.context.RegionPropertyContext;
-import io.github.aluria.region.logic.RegionPropertyProcessor;
+import io.github.aluria.region.command.context.RegionParserResolver;
+import io.github.aluria.region.command.parser.RegionPropertyParser;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -13,10 +13,10 @@ public final class RegionPropertyCompletion implements AsyncCommandCompletionHan
 
     @Override
     public Collection<String> getCompletions(BukkitCommandCompletionContext context) throws InvalidCommandArgument {
-        return RegionPropertyContext
+        return RegionParserResolver
           .getProcessors()
           .parallelStream()
-          .map(RegionPropertyProcessor::getIdentifier)
+          .map(RegionPropertyParser::getIdentifier)
           .collect(Collectors.toList());
     }
 }

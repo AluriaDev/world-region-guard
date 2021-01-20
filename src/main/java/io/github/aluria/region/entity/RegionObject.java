@@ -40,7 +40,7 @@ public final class RegionObject implements Comparable<RegionObject> {
     }
 
     public RegionObject setDisplayName(String displayName) {
-        if(displayName != null) {
+        if (displayName != null) {
             this.displayName = displayName.replaceAll("&", "§");
         }
         return this;

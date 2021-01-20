@@ -17,13 +17,19 @@ public final class PlayerRegionChangeEvent extends RegionEvent {
     }
 
     @Override
-    public void perform() {
-        makeInternal(leaveEvent, this, joinEvent);
+    public synchronized void perform() {
+        leaveEvent.perform();
+        super.setCancelled(leaveEvent.isCancelled());
+        super.perform();
+        joinEvent.setCancelled(super.isCancelled());
+        joinEvent.perform();
     }
 
     @Override
-    public boolean isCancelled() {
+    public synchronized boolean isCancelled() {
         if (leaveEvent == null || joinEvent == null) return false;
-        return leaveEvent.isCancelled() && joinEvent.isCancelled();
+        return leaveEvent.isCancelled()
+          || super.isCancelled()
+          || joinEvent.isCancelled();
     }
 }

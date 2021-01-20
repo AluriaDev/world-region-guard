@@ -19,7 +19,7 @@ public final class RegionObjectResolver implements ContextResolver<RegionObject,
           context.popFirstArg()
         );
 
-        if(regionObject == null) {
+        if (regionObject == null) {
             throw new InvalidCommandArgument("Não foi possível encontrar uma região com este nome.");
         }
 

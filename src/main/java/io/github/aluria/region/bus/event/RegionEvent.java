@@ -8,19 +8,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.plugin.PluginManager;
 
 @Getter
 public abstract class RegionEvent extends PlayerEvent implements Cancellable {
 
     @Getter
-    private static final HandlerList handlerList;
-    private static final PluginManager PLUGIN_MANAGER;
-
-    static {
-        handlerList = new HandlerList();
-        PLUGIN_MANAGER = Bukkit.getPluginManager();
-    }
+    private static final HandlerList handlerList = new HandlerList();
 
     private final RegionObject from;
     private final RegionObject to;
@@ -35,16 +28,19 @@ public abstract class RegionEvent extends PlayerEvent implements Cancellable {
         this.type = type;
     }
 
-    public void makeInternal(RegionEvent... events) {
-        for (RegionEvent event : events) {
-            PLUGIN_MANAGER.callEvent(event);
+    public synchronized void makeInternal(RegionEvent... events) {
+        synchronized (this) {
+            for (RegionEvent event : events) {
+                Bukkit.getPluginManager().callEvent(event);
+            }
         }
     }
 
-    public void perform() {
-        makeInternal(this);
+    public synchronized void perform() {
+        synchronized (this) {
+            makeInternal(this);
+        }
     }
-
 
     @Override
     public HandlerList getHandlers() {

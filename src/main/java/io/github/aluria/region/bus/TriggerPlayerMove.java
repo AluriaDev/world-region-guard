@@ -14,6 +14,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @RequiredArgsConstructor
 public final class TriggerPlayerMove implements Listener {
@@ -25,19 +27,30 @@ public final class TriggerPlayerMove implements Listener {
         final Location from = event.getFrom();
         final Location to = event.getTo();
         if (isStatelessPlayer(from, to)) return;
-
-        final RegionObject fromRegion = regionRegistry.getHighestRegionOnLocation(from);
-        final RegionObject toRegion = regionRegistry.getHighestRegionOnLocation(to);
-
         final Player player = event.getPlayer();
-        final RegionEvent regionEvent = getConditionEvent(player, fromRegion, toRegion);
-        if (regionEvent == null) return;
+        if (handleTrigger(player, from, to)) return;
+        player.teleport(from, TeleportCause.UNKNOWN);
+    }
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    private void onPlayerTeleport(PlayerTeleportEvent event) {
+        if (event.getCause() == TeleportCause.UNKNOWN) return;
+        final Player player = event.getPlayer();
+        if (handleTrigger(player, event.getFrom(), event.getTo())) return;
+        event.setCancelled(true);
+    }
+
+    private boolean handleTrigger(@NonNull Player player, @NonNull Location from, @NonNull Location to) {
+        final RegionEvent regionEvent = getConditionEvent(
+          player,
+          regionRegistry.getHighestRegionOnLocation(from),
+          regionRegistry.getHighestRegionOnLocation(to)
+        );
+
+        if (regionEvent == null) return true;
         regionEvent.perform();
-        if (!regionEvent.isCancelled()) return;
 
-        player.sendMessage("Cant into area");
-        player.teleport(from);
+        return !regionEvent.isCancelled();
     }
 
     private RegionEvent getConditionEvent(@NonNull Player player, RegionObject fromRegion, RegionObject toRegion) {

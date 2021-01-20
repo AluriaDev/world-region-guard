@@ -3,10 +3,10 @@ package io.github.aluria.region.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
+import io.github.aluria.region.command.parser.RegionPropertyParser;
 import io.github.aluria.region.entity.RegionMarkStack;
 import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.entity.RegionValidator;
-import io.github.aluria.region.logic.RegionPropertyProcessor;
 import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.selector.SelectorContainerWorld;
 import lombok.NonNull;
@@ -90,7 +90,7 @@ public final class RegionFactoryCommand extends BaseCommand {
     @CommandCompletion("@region @regionProcessor")
     @Syntax("<nome da região> <propriedade> <valor>")
     public void onProperty(Player player, RegionObject regionObject,
-                           RegionPropertyProcessor processor,
+                           RegionPropertyParser processor,
                            String rawValue) {
         final Object rawProperty = processor.processRawProperty(regionObject, rawValue);
         processor.processProperty(regionObject, rawProperty);

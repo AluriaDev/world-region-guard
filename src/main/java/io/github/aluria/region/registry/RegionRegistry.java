@@ -44,7 +44,7 @@ public abstract class RegionRegistry extends RegionDAO {
     /**
      * Removes a region from the registries, using instance of object
      *
-     * @param world instance of a valid world, obtained through {@link org.bukkit.Bukkit#getWorld(String)}
+     * @param world        instance of a valid world, obtained through {@link org.bukkit.Bukkit#getWorld(String)}
      * @param regionObject region instance, created using the {@link io.github.aluria.region.entity.RegionValidator#validate(String, Location, Location)}
      */
     public abstract void removeRegion(@NonNull World world, @NonNull RegionObject regionObject);
