@@ -25,7 +25,6 @@ public final class SQLReader {
     private final MysqlProvider provider;
     private final Plugin plugin;
 
-
     public SQLReader(@NonNull Plugin plugin, @NonNull MysqlProvider provider) {
         this.plugin = plugin;
         this.provider = provider;

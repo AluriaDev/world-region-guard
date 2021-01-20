@@ -7,8 +7,12 @@ import io.github.aluria.region.bus.RegionInteractMark;
 import io.github.aluria.region.bus.TriggerPlayerMove;
 import io.github.aluria.region.bus.test.PlayerRegionTest;
 import io.github.aluria.region.command.RegionFactoryCommand;
-import io.github.aluria.region.command.RegionObjectResolver;
+import io.github.aluria.region.command.completion.RegionObjectCompletion;
+import io.github.aluria.region.command.completion.RegionPropertyCompletion;
+import io.github.aluria.region.command.context.RegionObjectResolver;
+import io.github.aluria.region.command.context.RegionPropertyContext;
 import io.github.aluria.region.entity.RegionObject;
+import io.github.aluria.region.logic.RegionPropertyProcessor;
 import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.registry.RegionRegistryImpl;
 import io.github.aluria.region.selector.SelectorContainerWorld;
@@ -19,8 +23,8 @@ import org.bukkit.Bukkit;
 @Getter
 public final class RegionGuardPlugin extends AluriaPlugin {
 
-    private SQLReader sqlReader;
     private RegionRegistry regionRegistry;
+    private SQLReader sqlReader;
 
     @Override
     public void onEnable() {
@@ -41,6 +45,10 @@ public final class RegionGuardPlugin extends AluriaPlugin {
         registerDependency(RegionRegistry.class, regionRegistry);
         registerDependencies(SelectorContainerWorld.get());
         registerContextResolver(RegionObject.class, new RegionObjectResolver(regionRegistry));
+        registerContextResolver(RegionPropertyProcessor.class, new RegionPropertyContext());
+        registerAsyncCompletion("region", new RegionObjectCompletion(regionRegistry));
+        registerAsyncCompletion("regionProcessor", new RegionPropertyCompletion());
+
         registerCommands(new RegionFactoryCommand());
 
         registerListeners(

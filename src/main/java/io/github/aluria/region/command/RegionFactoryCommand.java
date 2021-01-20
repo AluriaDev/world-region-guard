@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.*;
 import io.github.aluria.region.entity.RegionMarkStack;
 import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.entity.RegionValidator;
+import io.github.aluria.region.logic.RegionPropertyProcessor;
 import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.selector.SelectorContainerWorld;
 import lombok.NonNull;
@@ -14,7 +15,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-@CommandAlias("region|regiao|região")
+@SuppressWarnings("all")
+@CommandAlias("região|region|regiao")
 @CommandPermission("aluria.region.admin")
 @Description("Aluria world region command")
 public final class RegionFactoryCommand extends BaseCommand {
@@ -41,9 +43,11 @@ public final class RegionFactoryCommand extends BaseCommand {
         help.showHelp();
     }
 
-    @Subcommand("create|criar")
+    @Subcommand("criar|create")
     @Syntax("<nome da região> [prioridade] [nome de exibição da região]")
-    public void onCreate(Player player, @Single String regionName, @Default("1") int priority, @Optional String displayName) {
+    public void onCreate(Player player, @Single String regionName,
+                         @Default("1") int priority,
+                         @Optional String displayName) {
         final Location firstLocation = containerWorld.getFirstLocation(player);
         final Location secondLocation = containerWorld.getSecondLocation(player);
 
@@ -74,22 +78,34 @@ public final class RegionFactoryCommand extends BaseCommand {
         send(player, "§aA região §7'%s'§a foi criada com sucesso, com uma prioridade de §7'%s'§a.", regionName, priority);
     }
 
-    @Subcommand("remove|remover")
+    @Subcommand("remover|remove")
     @Syntax("<nome da região>")
+    @CommandCompletion("@region")
     public void onRemove(Player player, RegionObject regionObject) {
         regionRegistry.removeRegion(player.getWorld(), regionObject);
         send(player, "§aRegião §7'%s' §afoi removida dos registros deste mundo.", regionObject.getName());
     }
 
-    @Subcommand("priority|prioridade")
-    @Syntax("<nome da região> <prioridade>")
-    public void onPriority(Player player, RegionObject regionObject, int priority) {
-        regionObject.setPriority(priority);
+    @Subcommand("propriedade|property|prop")
+    @CommandCompletion("@region @regionProcessor")
+    @Syntax("<nome da região> <propriedade> <valor>")
+    public void onProperty(Player player, RegionObject regionObject,
+                           RegionPropertyProcessor processor,
+                           String rawValue) {
+        final Object rawProperty = processor.processRawProperty(regionObject, rawValue);
+        processor.processProperty(regionObject, rawProperty);
         regionRegistry.save(regionObject);
-        send(player, "§aPrioridade da região §7'%s' §afoi definida para §7'%s'§a.", regionObject.getName(), priority);
+
+        send(
+          player,
+          "§aPropriedade §7'%s' §ada região §7'%s' §afoi definida para §7'%s'§a.",
+          processor.getIdentifier(),
+          regionObject.getName(),
+          rawValue
+        );
     }
 
-    @Subcommand("mark|demarcar")
+    @Subcommand("demarcar|mark")
     public void onMark(Player player) {
         player.sendMessage(helpUsage(
           " §a§oVocê está no menu de ajuda: onde aprenderá como demarcar regiões customizadas e protegidas para o funcionamento do servidor. Para podermos começar, primeiramente você precisa demarcar uma região, porém como se faz isso?",
@@ -105,14 +121,6 @@ public final class RegionFactoryCommand extends BaseCommand {
           ""
         ));
         player.getInventory().addItem(RegionMarkStack.getStackReference());
-    }
-
-    private RegionObject createRegion(@NonNull String regionName, @NonNull Location firstLocation, @NonNull Location secondLocation, @NonNull int priority) {
-        return RegionValidator.validate(
-          regionName,
-          firstLocation,
-          secondLocation
-        ).setPriority(priority);
     }
 
     private String[] helpUsage(String... text) {

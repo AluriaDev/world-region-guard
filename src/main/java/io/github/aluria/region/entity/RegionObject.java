@@ -19,6 +19,7 @@ public final class RegionObject implements Comparable<RegionObject> {
     private final Location end;
     private final Cuboid cuboid;
 
+    private RegionFlagObject flags;
     private String displayName;
     private String permission;
     private int priority;
@@ -30,11 +31,19 @@ public final class RegionObject implements Comparable<RegionObject> {
         this.end = end;
         this.cuboid = new Cuboid(start, end);
         this.priority = 1;
+        this.flags = new RegionFlagObject();
     }
 
     public String getDisplayName() {
         if (displayName == null) return name;
-        return displayName.replaceAll("&", "§");
+        return displayName;
+    }
+
+    public RegionObject setDisplayName(String displayName) {
+        if(displayName != null) {
+            this.displayName = displayName.replaceAll("&", "§");
+        }
+        return this;
     }
 
     public String getWorldBaseName() {
