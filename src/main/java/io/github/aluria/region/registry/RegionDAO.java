@@ -19,11 +19,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
-public abstract class RegionDataAccess {
+public abstract class RegionDAO {
 
     private final SQLReader sqlReader;
 
-    protected RegionDataAccess(@NonNull SQLReader sqlReader) {
+    protected RegionDAO(@NonNull SQLReader sqlReader) {
         this.sqlReader = sqlReader;
     }
 
