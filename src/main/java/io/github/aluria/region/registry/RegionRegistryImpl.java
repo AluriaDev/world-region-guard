@@ -61,7 +61,7 @@ public final class RegionRegistryImpl extends RegionRegistry {
     @Override
     public RegionObject getRegionByName(@NonNull World world, @NonNull String name) {
         for (RegionObject regionObject : registry.get(world)) {
-            if (regionObject.equals(name)) {
+            if (regionObject.equalsName(name)) {
                 return regionObject;
             }
         }

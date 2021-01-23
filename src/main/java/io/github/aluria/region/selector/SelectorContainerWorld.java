@@ -8,6 +8,8 @@ import lombok.experimental.Accessors;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 @Getter
 public final class SelectorContainerWorld {
 
@@ -58,6 +60,6 @@ public final class SelectorContainerWorld {
     }
 
     private boolean notEquals(@NonNull Location positionOne, @NonNull Location positionTwo) {
-        return !positionOne.getWorld().equals(positionTwo.getWorld());
+        return !Objects.equals(positionOne.getWorld(), positionTwo.getWorld());
     }
 }

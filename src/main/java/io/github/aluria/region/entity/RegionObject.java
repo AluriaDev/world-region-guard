@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Data
@@ -68,7 +69,7 @@ public final class RegionObject extends RegionFlagObject implements Comparable<R
         return isLocationInside(player.getLocation());
     }
 
-    public boolean equals(String regionName) {
+    public boolean equalsName(String regionName) {
         return name.equalsIgnoreCase(regionName);
     }
 
@@ -79,7 +80,7 @@ public final class RegionObject extends RegionFlagObject implements Comparable<R
         final RegionObject other = (RegionObject) object;
 //        return other.getWorld().equals(world)
 //          && id.equals(other.getId());
-        return other.getId().equals(id);
+        return Objects.equals(id, other.getId());
     }
 
     @Override

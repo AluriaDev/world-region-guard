@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Location;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 @UtilityClass
@@ -23,7 +24,7 @@ public final class RegionValidator {
             throw new IllegalStateException("Region name cannot be longer than 25 characters");
         }
 
-        if (!start.getWorld().equals(end.getWorld())) {
+        if (!Objects.equals(start.getWorld(), end.getWorld())) {
             throw new IllegalStateException("The region's position must be at the same world");
         }
 
