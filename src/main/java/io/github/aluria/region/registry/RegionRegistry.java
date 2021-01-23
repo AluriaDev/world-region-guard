@@ -20,7 +20,7 @@ public abstract class RegionRegistry extends RegionDataAccess {
      * by containers that organize the project hierarchy)
      *
      * @param world        instance of a valid world, obtained through {@link org.bukkit.Bukkit#getWorld(String)}
-     * @param regionObject region instance, created using the {@link io.github.aluria.region.entity.RegionValidator#validate(String, Location, Location)}
+     * @param regionObject region instance, created using the {@link io.github.aluria.region.entity.RegionValidator#validate(String, String, Location, Location)}
      */
     public abstract void registerRegion(@NonNull World world, @NonNull RegionObject regionObject);
 
@@ -45,7 +45,7 @@ public abstract class RegionRegistry extends RegionDataAccess {
      * Removes a region from the registries, using instance of object
      *
      * @param world        instance of a valid world, obtained through {@link org.bukkit.Bukkit#getWorld(String)}
-     * @param regionObject region instance, created using the {@link io.github.aluria.region.entity.RegionValidator#validate(String, Location, Location)}
+     * @param regionObject region instance, created using the {@link io.github.aluria.region.entity.RegionValidator#validate(String, String, Location, Location)}
      */
     public abstract void removeRegion(@NonNull World world, @NonNull RegionObject regionObject);
 
