@@ -7,7 +7,10 @@ import lombok.experimental.Accessors;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-public final class RegionFlagObject {
+public abstract class RegionFlagObject {
 
     private boolean canBreak = true;
+    private boolean canPlace = true;
+    private boolean canExecuteCommand = true;
+    private boolean canChat = true;
 }

@@ -53,7 +53,7 @@ public final class RegionFactoryCommand extends BaseCommand {
 
         if (firstLocation == null || secondLocation == null) {
             player.sendMessage(helpUsage(
-              " §cNão foi possível possivel a região, por quê: alguma das duas posições ainda não fora definidas. Algumas das causas são:",
+              " §cNão foi possível definir a região, por que: alguma das duas posições ainda não fora definidas. Algumas das causas são:",
               "  §r- §7Você ainda não as definiu.",
               "  §r- §7Você já as tinha definido, porém elas não eram do mesmo mundo e por isso o sistema de segurança cancelou a marcação. §8§o(Precaução para idiotas que forem fazer merda, assim como você está fazendo)",
               " ",
@@ -70,7 +70,7 @@ public final class RegionFactoryCommand extends BaseCommand {
         }
 
         final RegionObject regionObject = RegionValidator
-          .validate(regionName, firstLocation, secondLocation)
+          .validate(world.getName(), regionName, firstLocation, secondLocation)
           .setPriority(priority)
           .setDisplayName(displayName);
 

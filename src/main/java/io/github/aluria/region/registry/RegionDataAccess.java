@@ -15,14 +15,15 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
-public abstract class RegionDAO {
+public abstract class RegionDataAccess {
 
     private final SQLReader sqlReader;
 
-    protected RegionDAO(@NonNull SQLReader sqlReader) {
+    protected RegionDataAccess(@NonNull SQLReader sqlReader) {
         this.sqlReader = sqlReader;
     }
 
@@ -85,8 +86,7 @@ public abstract class RegionDAO {
     public void delete(@NonNull RegionObject regionObject) {
         sqlReader.update(
           "region.delete",
-          regionObject.getWorldBaseName(),
-          regionObject.getName()
+          regionObject.getId().toString()
         );
     }
 
@@ -106,13 +106,12 @@ public abstract class RegionDAO {
           .map("region.select_all", this::regionCompute)
           .parallelStream()
           .collect(
-            Collectors.groupingBy(RegionObject::getWorldBase)
+            Collectors.groupingBy(RegionObject::getWorld)
           );
     }
 
     private RegionObject regionCompute(@NonNull ResultSet resultSet) throws SQLException {
         final String worldName = resultSet.getString("world_name");
-        final String regionName = resultSet.getString("name");
 
         final Location locationStart = LocationUtil.deserialize(
           worldName, resultSet.getString("location_start")
@@ -123,7 +122,12 @@ public abstract class RegionDAO {
         );
 
         return RegionValidator
-          .validate(regionName, locationStart, locationEnd)
+          .validate(
+            UUID.fromString(resultSet.getString("id")),
+            resultSet.getString("region_name"),
+            locationStart,
+            locationEnd
+          )
           .setPriority(resultSet.getInt("priority"))
           .setDisplayName(resultSet.getString("display_name"));
     }
@@ -134,14 +138,14 @@ public abstract class RegionDAO {
           regionObject.getRawLocationEnd(),
           regionObject.getDisplayName(),
           regionObject.getPriority(),
-          regionObject.getWorldBaseName(),
-          regionObject.getName()
+          regionObject.getId().toString()
         };
     }
 
     private Object[] insertObjects(@NonNull RegionObject regionObject) {
         return new Object[]{
-          regionObject.getWorldBaseName(),
+          regionObject.getId().toString(),
+          regionObject.getWorldName(),
           regionObject.getName(),
           regionObject.getRawLocationStart(),
           regionObject.getRawLocationEnd(),

@@ -1,8 +1,8 @@
-insert into region(
-    world_name,
-    name,
-    location_start,
-    location_end,
-    display_name,
-    priority
-) values (?, ?, ?, ?, ?, ?)
+insert into region_entity(id,
+                          world_name,
+                          region_name,
+                          location_start,
+                          location_end,
+                          display_name,
+                          priority)
+values (?, ?, ?, ?, ?, ?, ?);

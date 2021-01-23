@@ -57,7 +57,7 @@ public final class SelectorContainerWorld {
         return sections.containsRow(player);
     }
 
-    private boolean notEquals(@NonNull Location pos1, @NonNull Location pos2) {
-        return !pos1.getWorld().equals(pos2.getWorld());
+    private boolean notEquals(@NonNull Location positionOne, @NonNull Location positionTwo) {
+        return !positionOne.getWorld().equals(positionTwo.getWorld());
     }
 }

@@ -9,29 +9,31 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 @Data
 @Accessors(chain = true)
-public final class RegionObject implements Comparable<RegionObject> {
+public final class RegionObject extends RegionFlagObject implements Comparable<RegionObject> {
 
-    private final World worldBase;
+    private final UUID id;
+    private final World world;
     private final String name;
     private final Location start;
     private final Location end;
     private final Cuboid cuboid;
 
-    private RegionFlagObject flags;
     private String displayName;
     private String permission;
     private int priority;
 
-    RegionObject(@NonNull String name, @NonNull Location start, @NonNull Location end) {
-        this.worldBase = start.getWorld();
+    RegionObject(UUID id, @NonNull String name, @NonNull Location start, @NonNull Location end) {
+        this.id = id;
+        this.world = start.getWorld();
         this.name = name;
         this.start = start;
         this.end = end;
         this.cuboid = new Cuboid(start, end);
         this.priority = 1;
-        this.flags = new RegionFlagObject();
     }
 
     public String getDisplayName() {
@@ -46,8 +48,8 @@ public final class RegionObject implements Comparable<RegionObject> {
         return this;
     }
 
-    public String getWorldBaseName() {
-        return worldBase.getName();
+    public String getWorldName() {
+        return world.getName();
     }
 
     public String getRawLocationStart() {
@@ -75,8 +77,9 @@ public final class RegionObject implements Comparable<RegionObject> {
         if (this == object) return true;
         if (object == null || object.getClass() != getClass()) return false;
         final RegionObject other = (RegionObject) object;
-        if (!other.getWorldBase().equals(worldBase)) return false;
-        return equals(other.getName());
+//        return other.getWorld().equals(world)
+//          && id.equals(other.getId());
+        return other.getId().equals(id);
     }
 
     @Override

@@ -1,1 +1,3 @@
-delete from region where world_name=? and name=?;
+delete
+from region_entity
+where id = ?;

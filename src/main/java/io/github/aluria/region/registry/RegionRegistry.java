@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public abstract class RegionRegistry extends RegionDAO {
+public abstract class RegionRegistry extends RegionDataAccess {
 
     protected RegionRegistry(@NonNull SQLReader sqlReader) {
         super(sqlReader);

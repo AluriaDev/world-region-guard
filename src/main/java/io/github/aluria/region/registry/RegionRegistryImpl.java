@@ -86,7 +86,9 @@ public final class RegionRegistryImpl extends RegionRegistry {
             }
         }
 
-        if (ordering == null) return new LinkedList<>(regionObjects);
+        if (ordering == null) {
+            return new LinkedList<>(regionObjects);
+        }
         return ordering.sortedCopy(regionObjects);
     }
 
