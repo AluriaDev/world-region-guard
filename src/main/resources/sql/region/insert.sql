@@ -4,5 +4,6 @@ insert into region_entity(id,
                           location_start,
                           location_end,
                           display_name,
-                          priority)
-values (?, ?, ?, ?, ?, ?, ?);
+                          priority,
+                          flag)
+values (?, ?, ?, ?, ?, ?, ?, ?);

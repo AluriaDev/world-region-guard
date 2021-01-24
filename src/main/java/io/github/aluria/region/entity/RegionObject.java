@@ -5,6 +5,7 @@ import io.github.aluria.common.utils.LocationUtil;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+import lombok.experimental.Delegate;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 @Data
 @Accessors(chain = true)
-public final class RegionObject extends RegionFlagObject implements Comparable<RegionObject> {
+public final class RegionObject extends RegionFlag implements Comparable<RegionObject> {
 
     private final UUID id;
     private final World world;
@@ -23,11 +24,14 @@ public final class RegionObject extends RegionFlagObject implements Comparable<R
     private final Location end;
     private final Cuboid cuboid;
 
+    @Delegate
+    private final RegionFlag flag;
+
     private String displayName;
     private String permission;
     private int priority;
 
-    RegionObject(UUID id, @NonNull String name, @NonNull Location start, @NonNull Location end) {
+    RegionObject(@NonNull UUID id, @NonNull String name, @NonNull Location start, @NonNull Location end, @NonNull RegionFlag regionFlag) {
         this.id = id;
         this.world = start.getWorld();
         this.name = name;
@@ -35,6 +39,7 @@ public final class RegionObject extends RegionFlagObject implements Comparable<R
         this.end = end;
         this.cuboid = new Cuboid(start, end);
         this.priority = 1;
+        this.flag = regionFlag;
     }
 
     public String getDisplayName() {

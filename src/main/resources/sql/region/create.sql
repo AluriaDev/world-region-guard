@@ -7,5 +7,6 @@ create table if not exists region_entity
     location_end   varchar(50) not null,
     display_name   varchar(50)          default null,
     priority       int         not null default 1,
+    flag           json        not null,
     unique (world_name, region_name)
 );

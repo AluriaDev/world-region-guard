@@ -1,7 +1,10 @@
 package io.github.aluria.region.registry;
 
 import com.google.common.collect.Multimap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.github.aluria.common.utils.LocationUtil;
+import io.github.aluria.region.entity.RegionFlag;
 import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.entity.RegionValidator;
 import io.github.aluria.region.util.sql_reader.SQLReader;
@@ -20,6 +23,10 @@ import java.util.stream.Collectors;
 
 @Getter
 public abstract class RegionDAO {
+
+    private final static Gson GSON = new GsonBuilder()
+      .disableHtmlEscaping()
+      .create();
 
     private final SQLReader sqlReader;
 
@@ -81,7 +88,7 @@ public abstract class RegionDAO {
     /**
      * Delete region from the database
      *
-     * @param regionObject region instance, created using the {@link io.github.aluria.region.entity.RegionValidator#validate(String, Location, Location)}
+     * @param regionObject region instance, created using the {@link io.github.aluria.region.entity.RegionValidator#validate(String, String, Location, Location)}
      */
     public void delete(@NonNull RegionObject regionObject) {
         sqlReader.update(
@@ -112,24 +119,32 @@ public abstract class RegionDAO {
 
     private RegionObject regionCompute(@NonNull ResultSet resultSet) throws SQLException {
         final String worldName = resultSet.getString("world_name");
-
-        final Location locationStart = LocationUtil.deserialize(
-          worldName, resultSet.getString("location_start")
-        );
-
-        final Location locationEnd = LocationUtil.deserialize(
-          worldName, resultSet.getString("location_end")
-        );
+        final Location locationStart = deserialize(worldName, resultSet.getString("location_start"));
+        final Location locationEnd = deserialize(worldName, resultSet.getString("location_end"));
+        final String rawFlag = resultSet.getString("flag");
 
         return RegionValidator
           .validate(
             UUID.fromString(resultSet.getString("id")),
             resultSet.getString("region_name"),
             locationStart,
-            locationEnd
+            locationEnd,
+            fromFlagJson(rawFlag)
           )
           .setPriority(resultSet.getInt("priority"))
           .setDisplayName(resultSet.getString("display_name"));
+    }
+
+    private Location deserialize(@NonNull String worldName, @NonNull String rawLocation) {
+        return LocationUtil.deserialize(worldName, rawLocation);
+    }
+
+    private String toJsonFlag(@NonNull RegionObject regionObject) {
+        return GSON.toJson(regionObject.getFlag());
+    }
+
+    private RegionFlag fromFlagJson(@NonNull String json) {
+        return GSON.fromJson(json, RegionFlag.class);
     }
 
     private Object[] updateObjects(@NonNull RegionObject regionObject) {
@@ -138,6 +153,7 @@ public abstract class RegionDAO {
           regionObject.getRawLocationEnd(),
           regionObject.getDisplayName(),
           regionObject.getPriority(),
+          toJsonFlag(regionObject),
           regionObject.getId().toString()
         };
     }
@@ -150,7 +166,8 @@ public abstract class RegionDAO {
           regionObject.getRawLocationStart(),
           regionObject.getRawLocationEnd(),
           regionObject.getDisplayName(),
-          regionObject.getPriority()
+          regionObject.getPriority(),
+          toJsonFlag(regionObject)
         };
     }
 }
