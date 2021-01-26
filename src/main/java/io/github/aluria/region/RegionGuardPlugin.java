@@ -11,13 +11,15 @@ import io.github.aluria.region.command.completion.RegionObjectCompletion;
 import io.github.aluria.region.command.completion.RegionPropertyCompletion;
 import io.github.aluria.region.command.context.RegionObjectResolver;
 import io.github.aluria.region.command.context.RegionParserResolver;
-import io.github.aluria.region.command.parser.RegionPropertyParser;
+import io.github.aluria.region.command.parser.PropertyFactory;
+import io.github.aluria.region.command.parser.PropertyObject;
 import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.registry.RegionRegistryImpl;
 import io.github.aluria.region.selector.SelectorContainerWorld;
 import io.github.aluria.region.util.sql_reader.SQLReader;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 
 @Getter
@@ -42,12 +44,13 @@ public final class RegionGuardPlugin extends AluriaPlugin {
 //        final MessageProvider messageProvider = new MessageProvider(configuration);
 //        new SelectorContainerJob(this);
 
+        final PropertyFactory propertyFactory = new PropertyFactory().instructApplication();
         registerDependency(RegionRegistry.class, regionRegistry);
         registerDependencies(SelectorContainerWorld.get());
         registerContextResolver(RegionObject.class, new RegionObjectResolver(regionRegistry));
-        registerContextResolver(RegionPropertyParser.class, new RegionParserResolver());
+        registerContextResolver(PropertyObject.class, new RegionParserResolver(propertyFactory));
         registerAsyncCompletion("region", new RegionObjectCompletion(regionRegistry));
-        registerAsyncCompletion("regionProcessor", new RegionPropertyCompletion());
+        registerAsyncCompletion("regionProcessor", new RegionPropertyCompletion(propertyFactory));
 
         registerCommands(new RegionFactoryCommand());
 

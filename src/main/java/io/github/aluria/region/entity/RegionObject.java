@@ -2,6 +2,7 @@ package io.github.aluria.region.entity;
 
 import io.github.aluria.common.utils.Cuboid;
 import io.github.aluria.common.utils.LocationUtil;
+import io.github.aluria.region.command.parser.PropertyParser;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
@@ -27,8 +28,11 @@ public final class RegionObject extends RegionFlag implements Comparable<RegionO
     @Delegate
     private final RegionFlag flag;
 
+    @PropertyParser
     private String displayName;
     private String permission;
+
+    @PropertyParser
     private int priority;
 
     RegionObject(@NonNull UUID id, @NonNull String name, @NonNull Location start, @NonNull Location end, @NonNull RegionFlag regionFlag) {
