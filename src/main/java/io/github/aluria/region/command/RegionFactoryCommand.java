@@ -8,7 +8,8 @@ import io.github.aluria.region.entity.RegionMarkStack;
 import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.entity.RegionValidator;
 import io.github.aluria.region.registry.RegionRegistry;
-import io.github.aluria.region.selector.SelectorContainerWorld;
+import io.github.aluria.region.selector.PlayerSelector;
+import io.github.aluria.region.selector.SelectorContainer;
 import lombok.NonNull;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Location;
@@ -31,9 +32,6 @@ public final class RegionFactoryCommand extends BaseCommand {
     }
 
     @Dependency
-    private SelectorContainerWorld containerWorld;
-
-    @Dependency
     private RegionRegistry regionRegistry;
 
     @Default
@@ -48,8 +46,9 @@ public final class RegionFactoryCommand extends BaseCommand {
     public void onCreate(Player player, @Single String regionName,
                          @Default("1") int priority,
                          @Optional String displayName) {
-        final Location firstLocation = containerWorld.getFirstLocation(player);
-        final Location secondLocation = containerWorld.getSecondLocation(player);
+        final PlayerSelector playerSelector = SelectorContainer.from(player);
+        final Location firstLocation = playerSelector.getStart();
+        final Location secondLocation = playerSelector.getEnd();
 
         if (firstLocation == null || secondLocation == null) {
             player.sendMessage(helpUsage(

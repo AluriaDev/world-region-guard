@@ -31,6 +31,7 @@ public final class RegionMarkStack extends ItemBuilder {
     }
 
     public static boolean isSimilar(ItemStack item) {
+        if (item == null || item.getType() != STACK_REFERENCE.getType()) return false;
         return NBTCompoundUtil.hasCompoundEntryTag(item, "aluria.region.mark");
     }
 

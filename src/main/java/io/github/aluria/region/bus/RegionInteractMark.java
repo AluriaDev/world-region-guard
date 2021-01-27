@@ -1,7 +1,8 @@
 package io.github.aluria.region.bus;
 
 import io.github.aluria.region.entity.RegionMarkStack;
-import io.github.aluria.region.selector.SelectorContainerWorld;
+import io.github.aluria.region.selector.PlayerSelector;
+import io.github.aluria.region.selector.SelectorContainer;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -15,25 +16,24 @@ import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
 
 public final class RegionInteractMark implements Listener {
 
-    private final static SelectorContainerWorld CONTAINER_WORLD;
-
-    static {
-        CONTAINER_WORLD = SelectorContainerWorld.get();
-    }
-
     @EventHandler(ignoreCancelled = true)
     private void onPlayerInteract(PlayerInteractEvent event) {
         final Action action = event.getAction();
-        if (action != LEFT_CLICK_BLOCK && action != RIGHT_CLICK_BLOCK) return;
-        if (!RegionMarkStack.isSimilar(event.getItem())) return;
+        if (action != LEFT_CLICK_BLOCK && action != RIGHT_CLICK_BLOCK
+          && !RegionMarkStack.isSimilar(event.getItem())) return;
 
         final Player player = event.getPlayer();
-        if (!player.isOp()) return;
+        if (!player.isOp()) {
+            player.sendMessage("§cSem permissão!");
+            return;
+        }
 
         final Location location = event.getClickedBlock().getLocation();
+        final PlayerSelector playerSelector = SelectorContainer.from(player);
+
         final boolean result = action == LEFT_CLICK_BLOCK
-          ? CONTAINER_WORLD.markFirstPosition(player, location)
-          : CONTAINER_WORLD.markSecondPosition(player, location);
+          ? playerSelector.setStart(location)
+          : playerSelector.setEnd(location);
 
         if (!result) {
             player.sendMessage("§cNão foi possível definir o ponto de uma região, utilize §7'/region mark' §cpara saber mais.");

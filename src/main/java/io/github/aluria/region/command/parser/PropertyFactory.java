@@ -32,6 +32,7 @@ public class PropertyFactory {
     private final List<PropertyObject> propertyObjects;
     private final Set<Method> methodSet;
     private final Set<Field> fieldSet;
+
     public PropertyFactory() {
         this.propertyObjects = new ArrayList<>();
         this.methodSet = getRecursiveDeclaredMethods(RegionObject.class);

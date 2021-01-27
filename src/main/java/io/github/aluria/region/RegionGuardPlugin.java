@@ -16,7 +16,6 @@ import io.github.aluria.region.command.parser.PropertyObject;
 import io.github.aluria.region.entity.RegionObject;
 import io.github.aluria.region.registry.RegionRegistry;
 import io.github.aluria.region.registry.RegionRegistryImpl;
-import io.github.aluria.region.selector.SelectorContainerWorld;
 import io.github.aluria.region.util.sql_reader.SQLReader;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -45,7 +44,6 @@ public final class RegionGuardPlugin extends AluriaPlugin {
 
         final PropertyFactory propertyFactory = new PropertyFactory().instructApplication();
         registerDependency(RegionRegistry.class, regionRegistry);
-        registerDependencies(SelectorContainerWorld.get());
         registerContextResolver(RegionObject.class, new RegionObjectResolver(regionRegistry));
         registerContextResolver(PropertyObject.class, new RegionParserResolver(propertyFactory));
         registerAsyncCompletion("region", new RegionObjectCompletion(regionRegistry));
