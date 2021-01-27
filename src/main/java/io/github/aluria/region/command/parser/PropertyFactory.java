@@ -13,6 +13,7 @@ import java.util.*;
 public class PropertyFactory {
 
     private static final Map<Class<?>, Class<?>> WRAPPER;
+
     static {
         WRAPPER = ImmutableMap
           .<Class<?>, Class<?>>builder()
@@ -28,20 +29,19 @@ public class PropertyFactory {
           .build();
     }
 
-    public static <T> Class<T> wrapperOf(Class<T> clazz) {
-        return clazz.isPrimitive()
-          ? (Class) WRAPPER.get(clazz)
-          : clazz;
-    }
-
     private final List<PropertyObject> propertyObjects;
     private final Set<Method> methodSet;
     private final Set<Field> fieldSet;
-
     public PropertyFactory() {
         this.propertyObjects = new ArrayList<>();
         this.methodSet = getRecursiveDeclaredMethods(RegionObject.class);
         this.fieldSet = getRecursiveDeclaredFields(RegionObject.class);
+    }
+
+    public static <T> Class<T> wrapperOf(Class<T> clazz) {
+        return clazz.isPrimitive()
+          ? (Class) WRAPPER.get(clazz)
+          : clazz;
     }
 
     public PropertyObject getPropertyObject(@NonNull String identifier) {

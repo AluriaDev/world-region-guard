@@ -19,7 +19,6 @@ import io.github.aluria.region.registry.RegionRegistryImpl;
 import io.github.aluria.region.selector.SelectorContainerWorld;
 import io.github.aluria.region.util.sql_reader.SQLReader;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 
 @Getter
