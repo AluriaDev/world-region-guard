@@ -36,11 +36,7 @@ public final class RegionGuardPlugin extends AluriaPlugin {
         }
 
         sqlReader.createAllTableSchemas("region");
-
         this.regionRegistry = new RegionRegistryImpl(sqlReader);
-
-//        final MessageProvider messageProvider = new MessageProvider(configuration);
-//        new SelectorContainerJob(this);
 
         final PropertyFactory propertyFactory = new PropertyFactory().instructApplication();
         registerDependency(RegionRegistry.class, regionRegistry);
@@ -48,7 +44,7 @@ public final class RegionGuardPlugin extends AluriaPlugin {
         registerContextResolver(PropertyObject.class, new RegionParserResolver(propertyFactory));
         registerAsyncCompletion("region", new RegionObjectCompletion(regionRegistry));
         registerAsyncCompletion("regionProcessor", new RegionPropertyCompletion(propertyFactory));
-
+        getPaperCommand().getCommandReplacements().addReplacement("%regionMark", "demarcar|mark");
         registerCommands(new RegionFactoryCommand());
 
         registerListeners(

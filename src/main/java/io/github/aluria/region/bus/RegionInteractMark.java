@@ -19,8 +19,8 @@ public final class RegionInteractMark implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onPlayerInteract(PlayerInteractEvent event) {
         final Action action = event.getAction();
-        if (action != LEFT_CLICK_BLOCK && action != RIGHT_CLICK_BLOCK
-          && !RegionMarkStack.isSimilar(event.getItem())) return;
+        if (action != LEFT_CLICK_BLOCK && action != RIGHT_CLICK_BLOCK) return;
+        if (!RegionMarkStack.isSimilar(event.getItem())) return;
 
         final Player player = event.getPlayer();
         if (!player.isOp()) {

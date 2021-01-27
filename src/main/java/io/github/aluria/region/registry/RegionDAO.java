@@ -24,9 +24,12 @@ import java.util.stream.Collectors;
 @Getter
 public abstract class RegionDAO {
 
-    private final static Gson GSON = new GsonBuilder()
-      .disableHtmlEscaping()
-      .create();
+    private final static Gson GSON;
+    static {
+        GSON = new GsonBuilder()
+          .disableHtmlEscaping()
+          .create();
+    }
 
     private final SQLReader sqlReader;
 

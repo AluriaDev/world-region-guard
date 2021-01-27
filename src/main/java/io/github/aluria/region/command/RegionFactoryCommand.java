@@ -12,7 +12,6 @@ import io.github.aluria.region.selector.PlayerSelector;
 import io.github.aluria.region.selector.SelectorContainer;
 import lombok.NonNull;
 import org.apache.commons.lang.ArrayUtils;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -47,10 +46,7 @@ public final class RegionFactoryCommand extends BaseCommand {
                          @Default("1") int priority,
                          @Optional String displayName) {
         final PlayerSelector playerSelector = SelectorContainer.from(player);
-        final Location firstLocation = playerSelector.getStart();
-        final Location secondLocation = playerSelector.getEnd();
-
-        if (firstLocation == null || secondLocation == null) {
+        if (!playerSelector.allCornersSet()) {
             player.sendMessage(helpUsage(
               " §cNão foi possível definir a região, por que: alguma das duas posições ainda não fora definidas. Algumas das causas são:",
               "  §r- §7Você ainda não as definiu.",
@@ -69,7 +65,7 @@ public final class RegionFactoryCommand extends BaseCommand {
         }
 
         final RegionObject regionObject = RegionValidator
-          .validate(world.getName(), regionName, firstLocation, secondLocation)
+          .validate(world.getName(), regionName, playerSelector.getStart(), playerSelector.getEnd())
           .setPriority(priority)
           .setDisplayName(displayName);
 
@@ -113,7 +109,7 @@ public final class RegionFactoryCommand extends BaseCommand {
         send(player, "§aTeleportado para o centro da região §7'%s'§a.", regionObject.getName());
     }
 
-    @Subcommand("demarcar|mark")
+    @Subcommand("%regionMark")
     public void onMark(Player player) {
         player.sendMessage(helpUsage(
           " §a§oVocê está no menu de ajuda: onde aprenderá como demarcar regiões customizadas e protegidas para o funcionamento do servidor. Para podermos começar, primeiramente você precisa demarcar uma região, porém como se faz isso?",
@@ -129,6 +125,12 @@ public final class RegionFactoryCommand extends BaseCommand {
           ""
         ));
         player.getInventory().addItem(RegionMarkStack.getStackReference());
+    }
+
+    @Subcommand("%regionMark expandir|expand")
+    public void onExpand(Player player) {
+        SelectorContainer.from(player).expand();
+        send(player, "§aOs pontos foram expandidos aos limites de altura do mundo.");
     }
 
     private String[] helpUsage(String... text) {

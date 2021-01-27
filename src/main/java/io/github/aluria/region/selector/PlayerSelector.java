@@ -12,7 +12,9 @@ public class PlayerSelector {
     private Location end;
 
     public boolean setStart(Location start) {
-        if (checkState(start, end)) return false;
+        if (checkState(start, end)) {
+            this.end = null;
+        }
         this.start = start;
         return true;
     }
@@ -21,6 +23,15 @@ public class PlayerSelector {
         if (checkState(start, end)) return false;
         this.end = end;
         return true;
+    }
+
+    public boolean allCornersSet() {
+        return start != null && end != null;
+    }
+
+    public void expand() {
+        if (start != null) start.setY(0);
+        if (end != null) end.setY(255);
     }
 
     public boolean checkState(Location cornerOne, Location cornerTwo) {
