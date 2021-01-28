@@ -1,33 +1,40 @@
 package io.github.aluria.region.command.parser;
 
 import co.aikar.commands.InvalidCommandArgument;
-import com.google.common.collect.ImmutableMap;
 import io.github.aluria.region.entity.RegionObject;
 import lombok.Data;
 import lombok.NonNull;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiFunction;
+import java.util.*;
 
 @Data
 @SuppressWarnings("all")
 public class PropertyObject {
 
-    private final static Map<Class<?>, BiFunction<PropertyObject, String, Object>> PARSERS;
+    private final static Map<Class, ParserFunctionType> PARSERS;
 
     static {
-        PARSERS = ImmutableMap
-          .<Class<?>, BiFunction<PropertyObject, String, Object>>builder()
+        PARSERS = new HashMap<>();
+        PARSERS.put(Integer.class, (property, value) -> Integer.parseInt(value));
+        PARSERS.put(String.class, (property, value) -> new String());
+        PARSERS.put(Set.class, (property, value) -> new HashSet<>(Arrays.asList(value.split(" "))));
+        PARSERS.put(Enum.class, (property, value) -> Enum.valueOf(
+          (Class<Enum>) property.getType(),
+          value.toUpperCase()
+        ));
+        PARSERS.put(Boolean.class, (property, value) ->
+          value.equals("true")
+            ? true : (value.equals("false") ? false : null)
+        );
+        /*PARSERS = ImmutableMap
+          .<Class, ParserFunctionType>builder()
           .put(Integer.class, (property, value) -> Integer.parseInt(value))
           .put(Enum.class, (property, value) -> Enum.valueOf((Class<Enum>) property.getType(), value.toUpperCase()))
           .put(Set.class, (property, value) -> new HashSet<>(Arrays.asList(value.split(" "))))
-          .put(Boolean.class, (property, value) -> value.equals("true") ? true : (value.equals("false") ? false : null))
-          .put(String.class, (property, value) -> value)
-          .build();
+          .put(Boolean.class, (property, value) -> (value.equals("true") ? true : (value.equals("false") ? false : null)))
+          .put(String.class, (property, value) -> new String())
+          .build();*/
     }
 
     private final String identifier;
@@ -45,7 +52,7 @@ public class PropertyObject {
     }
 
     private Object parseRawValue(@NonNull String rawValue) {
-        for (Map.Entry<Class<?>, BiFunction<PropertyObject, String, Object>> entry : PARSERS.entrySet()) {
+        for (Map.Entry<Class, ParserFunctionType> entry : PARSERS.entrySet()) {
             if (!entry.getKey().isAssignableFrom(type)) continue;
             return entry.getValue().apply(this, rawValue);
         }

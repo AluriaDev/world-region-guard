@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public abstract class RegionDAO {
 
     private final static Gson GSON;
+
     static {
         GSON = new GsonBuilder()
           .disableHtmlEscaping()
