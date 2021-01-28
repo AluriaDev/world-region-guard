@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Getter
 public final class RegionRegistryImpl extends RegionRegistry {
@@ -145,14 +146,15 @@ public final class RegionRegistryImpl extends RegionRegistry {
     }
 
     @Override
-    public void saveAll(@NonNull World world) {
-        saveAll(getAllRegionsContainer(world));
+    public CompletableFuture<Void> saveAll(@NonNull World world) {
+        return saveAll(getAllRegionsContainer(world));
     }
 
     @Override
     public void saveAll() {
-        for (World world : Bukkit.getWorlds()) {
-            saveAll(world);
+        for (final World world : Bukkit.getWorlds()) {
+            final CompletableFuture<Void> future = saveAll(world);
+            if (future != null) future.join();
         }
     }
 }

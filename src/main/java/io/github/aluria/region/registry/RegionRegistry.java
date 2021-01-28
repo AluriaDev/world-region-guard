@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class RegionRegistry extends RegionDAO {
 
@@ -154,8 +155,9 @@ public abstract class RegionRegistry extends RegionDAO {
      * Save all the container regions into to the database
      *
      * @param world instance of a valid world, obtained through {@link org.bukkit.Bukkit#getWorld(String)}
+     * @return future operation
      */
-    public abstract void saveAll(@NonNull World world);
+    public abstract CompletableFuture<Void> saveAll(@NonNull World world);
 
     /**
      * Save all the worlds regions container into the database

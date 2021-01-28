@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Getter
@@ -43,9 +44,9 @@ public abstract class RegionDAO {
      *
      * @param regionObjects collection from container world
      */
-    public void saveAll(@NonNull List<RegionObject> regionObjects) {
-        if (regionObjects.isEmpty()) return;
-        sqlReader.batch(
+    public CompletableFuture<Void> saveAll(@NonNull List<RegionObject> regionObjects) {
+        if (regionObjects.isEmpty()) return null;
+        return sqlReader.batch(
           "region.update",
           (regionObject, batchQuery) -> batchQuery.compute(updateObjects(regionObject)),
           regionObjects
@@ -75,9 +76,10 @@ public abstract class RegionDAO {
      * Save the region into the database
      *
      * @param regionObject region instance
+     * @return future operation
      */
-    public void save(@NonNull RegionObject regionObject) {
-        sqlReader.update(
+    public CompletableFuture<Void> save(@NonNull RegionObject regionObject) {
+        return sqlReader.update(
           "region.update",
           updateObjects(regionObject)
         ).thenAcceptAsync(status -> {
@@ -92,10 +94,11 @@ public abstract class RegionDAO {
     /**
      * Delete region from the database
      *
-     * @param regionObject region instance, created using the {@link io.github.aluria.region.entity.RegionValidator#validate(String, String, Location, Location)}
+     * @param regionObject region instance, created using the {@link RegionValidator#validate(String, String, Location, Location)}
+     * @return future operation
      */
-    public void delete(@NonNull RegionObject regionObject) {
-        sqlReader.update(
+    public CompletableFuture<Integer> delete(@NonNull RegionObject regionObject) {
+        return sqlReader.update(
           "region.delete",
           regionObject.getId().toString()
         );
